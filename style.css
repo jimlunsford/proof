@@ -1,0 +1,51 @@
+/*
+Theme Name: Proof
+Theme URI: https://jimlunsford.com/
+Author: Jim Lunsford
+Author URI: https://jimlunsford.com/
+Description: A custom classic WordPress theme for JimLunsford.com. Text-first and built for an identity hub front page, The Work page, writing, projects, lessons, curated hubs, and disciplined reading.
+Version: 2.0.7
+Requires at least: 6.4
+Tested up to: 6.9
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: proof
+Tags: blog, one-column, two-columns, custom-logo, featured-images, editor-style
+*/
+
+/* Main styles load from assets/css/theme.css */
+
+
+.screen-reader-text {
+	border: 0;
+	clip: rect(1px, 1px, 1px, 1px);
+	-webkit-clip-path: inset(50%);
+	clip-path: inset(50%);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute !important;
+	width: 1px;
+	word-wrap: normal !important;
+}
+
+.screen-reader-text:focus {
+	background-color: #f1f1f1;
+	clip: auto !important;
+	-webkit-clip-path: none;
+	clip-path: none;
+	color: #21759b;
+	display: block;
+	font-size: 0.875rem;
+	font-weight: 700;
+	height: auto;
+	left: 0.5rem;
+	line-height: normal;
+	padding: 0.75rem 1rem;
+	text-decoration: none;
+	top: 0.5rem;
+	width: auto;
+	z-index: 100000;
+}

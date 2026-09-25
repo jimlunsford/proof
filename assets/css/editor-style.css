@@ -1,0 +1,16 @@
+
+body {
+	font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+	color: #171717;
+	line-height: 1.7;
+	max-width: 740px;
+	margin: 0 auto;
+	padding: 1.5rem;
+}
+h1, h2, h3, h4, h5, h6 {
+	line-height: 1.15;
+	letter-spacing: -0.02em;
+}
+a {
+	color: #0d67c6;
+}
