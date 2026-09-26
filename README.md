@@ -8,7 +8,7 @@
 
 Proof is intentionally built around JimLunsford.com. Its templates, curated post paths, category names, author copy, and Customizer defaults reflect the site's actual publishing needs. This public GitHub repository makes the source readable and provides a development home. It does not make Proof a general-purpose theme, a WordPress.org submission, or a commitment to provide support or packaged public releases.
 
-The theme is licensed under **AGPL-3.0-or-later**; see `LICENSE` and the header in `style.css`. Earlier versions released under GPL-2.0-or-later retain their original license. The theme screenshot contains a portrait taken by Jim Lunsford, who has confirmed its redistribution rights.
+The theme is licensed under **AGPL-3.0-or-later**; see `LICENSE` and the header in `style.css`. Earlier versions released under GPL-2.0-or-later retain their original license. Jim Lunsford has confirmed he took the theme screenshot and has the right to redistribute it.
 
 ## Architecture and requirements
 
