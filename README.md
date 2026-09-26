@@ -37,7 +37,7 @@ The repository source is not a copy of the WordPress database, uploaded media, s
 
 - Changed Proof's license from GPL-2.0-or-later to AGPL-3.0-or-later and updated current repository metadata. No theme behavior changed.
 
-### 2.0.7 candidate
+### 2.0.7
 
 - Restricted curated post ID resolution and featured-card rendering to published posts.
 - Kept homepage destination and Latest Work cards as single links; link markup in their descriptions now retains its text without creating nested anchors.
