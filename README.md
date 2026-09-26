@@ -2,13 +2,13 @@
 
 **Proof** is the custom classic WordPress theme built for JimLunsford.com. It powers a text-first publishing site with an identity hub, long-form writing, category lanes, topic hubs, project writing, The Work page, and a site-specific résumé.
 
-**Current source version:** 2.0.7 candidate. This candidate has not been published to GitHub or deployed by this preparation pass.
+**Current source version:** 2.0.8.
 
 ## Project scope
 
-Proof is intentionally built around JimLunsford.com. Its templates, curated post paths, category names, author copy, and Customizer defaults reflect the site's actual publishing needs. The planned public GitHub repository will make the source readable and provide a development home. It does not make Proof a general-purpose theme, a WordPress.org submission, or a commitment to provide support or packaged public releases.
+Proof is intentionally built around JimLunsford.com. Its templates, curated post paths, category names, author copy, and Customizer defaults reflect the site's actual publishing needs. This public GitHub repository makes the source readable and provides a development home. It does not make Proof a general-purpose theme, a WordPress.org submission, or a commitment to provide support or packaged public releases.
 
-The theme is licensed under **GPL-2.0-or-later**; see `LICENSE` and the header in `style.css`. The theme screenshot contains a portrait whose redistribution rights must be confirmed before the repository becomes public.
+The theme is licensed under **AGPL-3.0-or-later**; see `LICENSE` and the header in `style.css`. Earlier versions released under GPL-2.0-or-later retain their original license. The theme screenshot contains a portrait taken by Jim Lunsford, who has confirmed its redistribution rights.
 
 ## Architecture and requirements
 
@@ -32,6 +32,10 @@ After activating the theme on a disposable or authorized WordPress installation:
 The repository source is not a copy of the WordPress database, uploaded media, site configuration, or SEO plugin output. No build step or bundled vendor dependency is required for the shipped assets.
 
 ## Version history
+
+### 2.0.8
+
+- Changed Proof's license from GPL-2.0-or-later to AGPL-3.0-or-later and updated current repository metadata. No theme behavior changed.
 
 ### 2.0.7 candidate
 
