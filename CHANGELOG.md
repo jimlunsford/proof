@@ -6,16 +6,16 @@
 - Rebuilt the README around Proof, its architecture, and JimLunsford.com; removed obsolete audit and process language.
 - No theme runtime behavior changed.
 
-### 2.0.8
+## 2.0.8
 
 - Changed Proof's license from GPL-2.0-or-later to AGPL-3.0-or-later and updated current repository metadata. No theme behavior changed.
 
-### 2.0.7
+## 2.0.7
 
 - Restricted curated post ID resolution and featured-card rendering to published posts.
 - Kept homepage destination and Latest Work cards as single links; link markup in their descriptions now retains its text without creating nested anchors.
 - Moved category page size and featured-post exclusions into the WordPress main query, so routing, the feed, and pagination share one result set.
-- Clarified public-source scope and setup in this README; added the GPL license text and a focused `.gitignore`.
+- Clarified public-source scope and setup in `README.md`; added the GPL license text and a focused `.gitignore`.
 
 ## 2.0.6
 
