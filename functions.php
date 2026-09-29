@@ -905,9 +905,10 @@ function proof_customize_register( $wp_customize ) {
 
 
 	$project_card_defaults = proof_get_project_card_defaults();
+	$card_number = 0;
 
 	foreach ( $project_card_defaults as $card_key => $card ) {
-		$card_name = ! empty( $card['title'] ) ? $card['title'] : ucwords( str_replace( '_', ' ', $card_key ) );
+		++$card_number;
 
 		$wp_customize->add_setting(
 			'proof_project_' . $card_key . '_enabled',
@@ -921,7 +922,7 @@ function proof_customize_register( $wp_customize ) {
 			'proof_project_' . $card_key . '_enabled',
 			array(
 				'section' => 'proof_projects_cards',
-				'label'   => sprintf( __( 'Show %s card', 'proof' ), $card_name ),
+				'label'   => sprintf( __( 'Show Card %d', 'proof' ), $card_number ),
 				'type'    => 'checkbox',
 			)
 		);
@@ -938,7 +939,7 @@ function proof_customize_register( $wp_customize ) {
 			'proof_project_' . $card_key . '_title',
 			array(
 				'section' => 'proof_projects_cards',
-				'label'   => sprintf( __( '%s title', 'proof' ), $card_name ),
+				'label'   => sprintf( __( 'Card %d title', 'proof' ), $card_number ),
 				'type'    => 'text',
 			)
 		);
@@ -955,7 +956,7 @@ function proof_customize_register( $wp_customize ) {
 			'proof_project_' . $card_key . '_description',
 			array(
 				'section'     => 'proof_projects_cards',
-				'label'       => sprintf( __( '%s description', 'proof' ), $card_name ),
+				'label'       => sprintf( __( 'Card %d description', 'proof' ), $card_number ),
 				'type'        => 'textarea',
 				'description' => __( 'Basic links are allowed in this field.', 'proof' ),
 			)
@@ -973,7 +974,7 @@ function proof_customize_register( $wp_customize ) {
 			'proof_project_' . $card_key . '_link_label',
 			array(
 				'section'     => 'proof_projects_cards',
-				'label'       => sprintf( __( '%s link label', 'proof' ), $card_name ),
+				'label'       => sprintf( __( 'Card %d link label', 'proof' ), $card_number ),
 				'type'        => 'text',
 				'description' => __( 'Optional. Shows only when a URL is also set.', 'proof' ),
 			)
@@ -991,7 +992,7 @@ function proof_customize_register( $wp_customize ) {
 			'proof_project_' . $card_key . '_url',
 			array(
 				'section' => 'proof_projects_cards',
-				'label'   => sprintf( __( '%s URL', 'proof' ), $card_name ),
+				'label'   => sprintf( __( 'Card %d URL', 'proof' ), $card_number ),
 				'type'    => 'url',
 			)
 		);

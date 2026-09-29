@@ -1,5 +1,11 @@
 # Proof version history
 
+## 2.0.10
+
+- Changed Projects page Customizer controls to generic numbered slots, with labels such as `Show Card 1`, `Card 1 title`, `Card 1 description`, `Card 1 link label`, and `Card 1 URL` for Cards 1 through 4.
+- Preserved existing project-card theme-mod setting IDs and compatibility with saved Customizer values; project content remains editable through Customizer.
+- Left Projects page card rendering, Project Notes, pagination, and other theme behavior unchanged.
+
 ## 2.0.9
 
 - Moved the complete version history from the README into `CHANGELOG.md`.
