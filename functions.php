@@ -278,8 +278,8 @@ function proof_customize_register( $wp_customize ) {
 	$wp_customize->add_section(
 		'proof_identity_latest_work',
 		array(
-			'title'       => __( 'Homepage: Latest Work', 'proof' ),
-			'description' => __( 'Curate up to three current pieces that show what you are writing and building now. Leave a title or URL blank to hide a slot.', 'proof' ),
+			'title'       => __( 'Homepage: Selected Work', 'proof' ),
+			'description' => __( 'Curate up to three pieces that represent the work you want to feature. Leave a title or URL blank to hide a slot.', 'proof' ),
 			'priority'    => 33,
 		)
 	);
@@ -437,8 +437,8 @@ function proof_customize_register( $wp_customize ) {
 		),
 
 		'proof_identity_latest_work_heading' => array(
-			'label'             => __( 'Latest Work section heading', 'proof' ),
-			'default'           => 'Latest Work',
+			'label'             => __( 'Selected Work section heading', 'proof' ),
+			'default'           => 'Selected Work',
 			'type'              => 'text',
 			'section'           => 'proof_identity_latest_work',
 			'sanitize_callback' => 'proof_sanitize_text_input',

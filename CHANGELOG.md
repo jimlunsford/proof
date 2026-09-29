@@ -1,5 +1,11 @@
 # Proof version history
 
+## 2.0.11
+
+- Renamed the homepage Latest Work feature to Selected Work in front-end and Customizer-facing language to reflect its curated behavior.
+- Updated the Customizer section description to describe manually selected featured work rather than automatically latest content.
+- Preserved all existing `proof_identity_latest_work_*` setting IDs, compatibility with saved Customizer values, item order, rendering, and homepage behavior.
+
 ## 2.0.10
 
 - Changed Projects page Customizer controls to generic numbered slots, with labels such as `Show Card 1`, `Card 1 title`, `Card 1 description`, `Card 1 link label`, and `Card 1 URL` for Cards 1 through 4.
