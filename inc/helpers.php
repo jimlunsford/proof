@@ -481,7 +481,7 @@ function proof_get_identity_destination_links() {
 }
 
 function proof_get_identity_latest_work_heading() {
-	$default = 'Latest Work';
+	$default = 'Selected Work';
 	return trim( get_theme_mod( 'proof_identity_latest_work_heading', $default ) );
 }
 

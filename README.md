@@ -2,7 +2,7 @@
 
 Proof is the custom classic WordPress theme powering [JimLunsford.com](https://jimlunsford.com/). It is a text-first publishing system built around long-form reading, an identity-focused homepage, distinct content lanes, and a growing body of writing and project work. The site is public and actively used; this repository holds the theme's development source.
 
-**Current repository version:** 2.0.10.
+**Current repository version:** 2.0.11.
 
 ## What Proof was built to do
 

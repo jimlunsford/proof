@@ -1,6 +1,6 @@
 <?php
 /**
- * Curated latest work section for the identity hub front page.
+ * Curated selected work section for the identity hub front page.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,7 +14,7 @@ if ( empty( $latest_work_items ) ) {
 	return;
 }
 ?>
-<section class="proof-identity-section proof-identity-latest-work" <?php echo $latest_work_heading ? 'aria-labelledby="proof-identity-latest-work-title"' : 'aria-label="' . esc_attr__( 'Latest work', 'proof' ) . '"'; ?>>
+<section class="proof-identity-section proof-identity-latest-work" <?php echo $latest_work_heading ? 'aria-labelledby="proof-identity-latest-work-title"' : 'aria-label="' . esc_attr__( 'Selected work', 'proof' ) . '"'; ?>>
 	<?php if ( $latest_work_heading ) : ?>
 		<div class="proof-identity-section-heading">
 			<h2 id="proof-identity-latest-work-title"><?php echo esc_html( $latest_work_heading ); ?></h2>
