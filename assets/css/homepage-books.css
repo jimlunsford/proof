@@ -1,0 +1,63 @@
+/* Approved, additive homepage book discovery. No existing page selectors. */
+.proof-identity-books-heading {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+	flex-wrap: wrap;
+}
+.proof-identity-books-catalog-link {
+	color: var(--proof-link, #0d67c6);
+	font-weight: 600;
+	font-size: .94rem;
+}
+.proof-identity-books-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1.1rem;
+}
+.proof-identity-book-card {
+	display: grid;
+	grid-template-columns: 112px minmax(0, 1fr);
+	gap: 1rem;
+	align-items: start;
+	padding: 1rem;
+	border: 1px solid var(--proof-soft-border, #d7d7cf);
+	background: #f4f6f7;
+	min-width: 0;
+}
+.proof-identity-book-card img {
+	width: 100%;
+	height: auto;
+	display: block;
+}
+.proof-identity-book-copy { min-width: 0; }
+.proof-identity-book-copy h3 {
+	font-size: 1.12rem;
+	line-height: 1.25;
+	margin: 0 0 .6rem;
+	font-weight: 800;
+}
+.proof-identity-book-copy p {
+	margin: 0 0 .95rem;
+	color: var(--proof-secondary, #4a4a4a);
+	font-size: .94rem;
+	line-height: 1.55;
+}
+.proof-identity-book-copy a {
+	color: var(--proof-link, #0d67c6);
+	font-size: .94rem;
+	font-weight: 700;
+}
+@media (max-width: 760px) {
+	.proof-identity-books-grid { grid-template-columns: 1fr; }
+	.proof-identity-book-card { grid-template-columns: 112px minmax(0, 1fr); }
+}
+@media (max-width: 380px) {
+	.proof-identity-book-card {
+		grid-template-columns: 90px minmax(0, 1fr);
+		padding: .75rem;
+		gap: .7rem;
+	}
+	.proof-identity-book-copy h3 { font-size: 1.04rem; }
+}

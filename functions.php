@@ -46,6 +46,13 @@ function proof_enqueue_assets() {
 	wp_enqueue_style( 'proof-theme', get_template_directory_uri() . '/assets/css/theme.css', array( 'proof-style' ), $asset_version );
 	wp_add_inline_style( 'proof-theme', proof_get_identity_hub_critical_css() );
 
+	// Keep the approved book addition scoped to the homepage and available
+	// alongside its critical layout styles, including with deferred CSS plugins.
+	$books_css = get_template_directory() . '/assets/css/homepage-books.css';
+	if ( is_front_page() && is_readable( $books_css ) ) {
+		wp_add_inline_style( 'proof-theme', file_get_contents( $books_css ) );
+	}
+
 	wp_enqueue_script(
 		'proof-navigation',
 		get_template_directory_uri() . '/assets/js/navigation.js',
@@ -719,6 +726,50 @@ function proof_customize_register( $wp_customize ) {
 			)
 		);
 		$link_number++;
+	}
+
+	$wp_customize->add_section(
+		'proof_identity_published_books',
+		array(
+			'title'       => __( 'Homepage: Published Books', 'proof' ),
+			'description' => __( 'Two compact book features. Leave a title, URL, or cover blank to hide a slot. Full descriptions and purchase links belong on the book pages.', 'proof' ),
+			'priority'    => 32.5,
+		)
+	);
+
+	$book_number = 1;
+	foreach ( proof_get_identity_published_books_defaults() as $key => $book ) {
+		$prefix = 'proof_identity_published_books_' . $key . '_';
+		foreach ( array( 'title' => 'text', 'description' => 'textarea', 'url' => 'url' ) as $field => $type ) {
+			$wp_customize->add_setting(
+				$prefix . $field,
+				array(
+					'default'           => $book[ $field ],
+					'sanitize_callback' => 'url' === $field ? 'proof_sanitize_url_input' : 'proof_sanitize_text_input',
+				)
+			);
+			$wp_customize->add_control(
+				$prefix . $field,
+				array(
+					'section' => 'proof_identity_published_books',
+					'label'   => sprintf( __( 'Book %1$d %2$s', 'proof' ), $book_number, $field ),
+					'type'    => $type,
+				)
+			);
+		}
+		$wp_customize->add_setting( $prefix . 'image_id', array( 'default' => $book['image_id'], 'sanitize_callback' => 'absint' ) );
+		$wp_customize->add_control(
+			new WP_Customize_Media_Control(
+				$wp_customize,
+				$prefix . 'image_id',
+				array(
+					'section'   => 'proof_identity_published_books',
+					'label'     => sprintf( __( 'Book %d cover', 'proof' ), $book_number ),
+					'mime_type' => 'image',
+				)
+			)
+		);
+		$book_number++;
 	}
 
 	$identity_latest_work_defaults = proof_get_identity_latest_work_defaults();

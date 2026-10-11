@@ -436,6 +436,11 @@ function proof_get_identity_destination_defaults() {
 			'description' => 'The ideas behind the work: higher standards, discipline, self-trust, identity rebuild, ownership, and recovery without dependency.',
 			'url'         => proof_get_core_frameworks_url(),
 		),
+		'book'               => array(
+			'title'       => 'Books',
+			'description' => 'The PERIOD Code and The Disciplined Operator, available in paperback and Kindle.',
+			'url'         => home_url( '/books/' ),
+		),
 		'about'              => array(
 			'title'       => 'About',
 			'description' => 'The longer version of who I am, what shaped me, and why this work exists.',
@@ -449,11 +454,6 @@ function proof_get_identity_destination_defaults() {
 		'recovery_beyond_aa' => array(
 			'title'       => 'Recovery Beyond AA',
 			'description' => 'Writing for people who want recovery rooted in ownership, autonomy, standards, and self-governance.',
-			'url'         => '',
-		),
-		'book'               => array(
-			'title'       => 'Book',
-			'description' => 'Ten Things I’ve Learned in 10 Years of Sobriety.',
 			'url'         => '',
 		),
 	);
@@ -475,6 +475,51 @@ function proof_get_identity_destination_links() {
 			$links,
 			function( $link ) {
 				return ! empty( $link['title'] ) && ! empty( $link['url'] );
+			}
+		)
+	);
+}
+
+/**
+ * Two curated homepage books. Existing book landing pages own the full copy.
+ *
+ * The attachment IDs are JimLunsford.com defaults, not portable media assets.
+ * Customizer values replace these defaults without a template change.
+ */
+function proof_get_identity_published_books_defaults() {
+	return array(
+		'one' => array(
+			'title'       => 'The PERIOD Code',
+			'description' => 'Six non-negotiable values to take back your life and keep it.',
+			'url'         => home_url( '/period-code/' ),
+			'image_id'    => 2586,
+		),
+		'two' => array(
+			'title'       => 'The Disciplined Operator',
+			'description' => 'A manifesto for self-command.',
+			'url'         => 'https://disciplinedoperator.com/',
+			'image_id'    => 2615,
+		),
+	);
+}
+
+function proof_get_identity_published_books() {
+	$books = proof_get_identity_published_books_defaults();
+
+	foreach ( $books as $key => &$book ) {
+		$prefix              = 'proof_identity_published_books_' . $key . '_';
+		$book['title']       = trim( get_theme_mod( $prefix . 'title', $book['title'] ) );
+		$book['description'] = trim( get_theme_mod( $prefix . 'description', $book['description'] ) );
+		$book['url']         = esc_url( get_theme_mod( $prefix . 'url', $book['url'] ) );
+		$book['image_id']    = absint( get_theme_mod( $prefix . 'image_id', $book['image_id'] ) );
+	}
+	unset( $book );
+
+	return array_values(
+		array_filter(
+			$books,
+			function( $book ) {
+				return '' !== $book['title'] && '' !== $book['url'] && wp_attachment_is_image( $book['image_id'] );
 			}
 		)
 	);
