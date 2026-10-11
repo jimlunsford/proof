@@ -81,6 +81,8 @@ $social_links           = proof_get_identity_social_links();
 		</section>
 	<?php endif; ?>
 
+	<?php get_template_part( 'template-parts/home/published-books' ); ?>
+
 	<?php get_template_part( 'template-parts/home/latest-work' ); ?>
 
 	<?php if ( ! empty( $gallery_image_ids ) ) : ?>

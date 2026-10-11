@@ -1,5 +1,13 @@
 # Proof version history
 
+## 2.0.12
+
+- Added the approved Books destination to Start Here before About, reusing the existing book setting IDs and preserving all other saved destinations.
+- Added a compact, responsive Published Books section between Start Here and Selected Work, using the two approved covers, short descriptions, individual book links, and View All Books.
+- Added two curated book slots to Customizer so titles, copy, URLs, and cover media can be maintained without rebuilding the layout.
+- Scoped all new styling to homepage book elements; preserved the existing identity, Selected Work, social links, navigation, footer, and individual book pages.
+- Added focused CLI regression coverage for defaults, saved settings, rendering, escaping, and incomplete book slots.
+
 ## 2.0.11
 
 - Renamed the homepage Latest Work feature to Selected Work in front-end and Customizer-facing language to reflect its curated behavior.

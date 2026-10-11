@@ -2,7 +2,7 @@
 
 Proof is the custom classic WordPress theme powering [JimLunsford.com](https://jimlunsford.com/). It is a text-first publishing system built around long-form reading, an identity-focused homepage, distinct content lanes, and a growing body of writing and project work. The site is public and actively used; this repository holds the theme's development source.
 
-**Current repository version:** 2.0.11.
+**Current repository version:** 2.0.12.
 
 ## What Proof was built to do
 
@@ -30,6 +30,14 @@ The site includes long-form articles, Recovery Standards, Discipline Dispatch, f
 - The homepage portrait can use generated WebP sizes cached in WordPress uploads under `proof-cache/`. Those generated images are site data, not repository source.
 
 The theme header requires WordPress 6.4 or later and PHP 7.4 or later. Its `Tested up to` field is 6.9. The repository contains the theme source, not the site's database, uploaded media, or WordPress configuration.
+
+## Homepage book discovery
+
+Version 2.0.12 adds Books to Start Here immediately before About, preserving the existing `proof_identity_destination_book_*` setting IDs. The homepage-only Published Books section sits between Start Here and Selected Work. Its two compact features link to the individual book pages, not directly to checkout. Full book copy and purchase links remain on the book pages and `/books/`.
+
+Maintain the two curated features under **Customizer > Homepage: Published Books**. Titles, descriptions, URLs, and cover media are editable. A blank title, URL, or missing/non-image cover hides that slot; clearing both hides the section. Current defaults use JimLunsford.com media IDs 2586 and 2615. No saved theme mods are rewritten by a theme update.
+
+The section stylesheet is scoped to the new book classes and added only on the homepage. Identity, existing Start Here entries, Selected Work, Follow and Connect, navigation, footer, other page templates, and SEO behavior are unchanged.
 
 ## Development
 
