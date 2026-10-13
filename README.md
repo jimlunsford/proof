@@ -2,7 +2,7 @@
 
 Proof is the custom classic WordPress theme powering [JimLunsford.com](https://jimlunsford.com/). It is a text-first publishing system built around long-form reading, an identity-focused homepage, distinct content lanes, and a growing body of writing and project work. The site is public and actively used; this repository holds the theme's development source.
 
-**Current repository version:** 2.0.12.
+**Current repository version:** 2.0.13.
 
 ## What Proof was built to do
 
@@ -33,15 +33,33 @@ The theme header requires WordPress 6.4 or later and PHP 7.4 or later. Its `Test
 
 ## Homepage book discovery
 
-Version 2.0.12 adds Books to Start Here immediately before About, preserving the existing `proof_identity_destination_book_*` setting IDs. The homepage-only Published Books section sits between Start Here and Selected Work. Its two compact features link to the individual book pages, not directly to checkout. Full book copy and purchase links remain on the book pages and `/books/`.
+Books appears in Start Here immediately before About, preserving the existing `proof_identity_destination_book_*` setting IDs. The homepage-only Published Books section sits between Start Here and Latest Work. Its two compact features link to the individual book pages, not directly to checkout. Full book copy and purchase links remain on the book pages and `/books/`.
 
 Maintain the two curated features under **Customizer > Homepage: Published Books**. Titles, descriptions, URLs, and cover media are editable. A blank title, URL, or missing/non-image cover hides that slot; clearing both hides the section. Current defaults use JimLunsford.com media IDs 2586 and 2615. No saved theme mods are rewritten by a theme update.
 
-The section stylesheet is scoped to the new book classes and added only on the homepage. Identity, existing Start Here entries, Selected Work, Follow and Connect, navigation, footer, other page templates, and SEO behavior are unchanged.
+The section stylesheet is scoped to the book classes and added only on the homepage.
+
+## Automatic Latest Work
+
+Latest Work displays the five newest published WordPress posts after Published Books and before the optional image row and Follow and Connect. Every category is eligible, including Projects and posts featured elsewhere. Entries use the existing category and clean-excerpt helpers, the published title, and the canonical post permalink, with one accessible link per item. The existing desktop two-column and mobile single-column list styles are retained.
+
+The dedicated `proof_get_identity_latest_work_query()` orders by original publication date, newest first. Editing an older post or making it sticky does not promote it. Drafts, pending posts, scheduled posts not yet published, private posts, trash, pages, and custom post types are excluded. Fewer than five eligible posts produces a shorter list; no eligible posts hides the section. Publishing a post updates the list through the normal WordPress query, without manual slots, synchronization, or an additional plugin.
+
+The heading is fixed as **Latest Work**. The retired Selected Work Customizer section, heading, and three manual slots are no longer registered or read. Existing `proof_identity_latest_work_*` theme mods remain stored unchanged; no migration or database cleanup runs. Other Customizer settings, the separate recent-writing feed, and category archive exclusions and pagination retain their existing behavior.
 
 ## Development
 
 `main` is the accepted source. Focused changes are developed on branches and reviewed through pull requests before merging. Repository acceptance does not automatically update JimLunsford.com; production deployment is handled separately.
+
+Run the standalone Published Books regression with `php tests/homepage-books.php`.
+
+Latest Work integration coverage uses real WordPress queries and templates, plus the PHP DOM extension for markup assertions. On an empty, disposable local WordPress install with Proof active, `WP_ENVIRONMENT_TYPE` set to `local`, and `PROOF_DISPOSABLE_TEST_SITE` defined as `true` in its test-only `wp-config.php`, run:
+
+```sh
+PROOF_TEST_WP_ROOT=/absolute/path/to/disposable/wordpress php tests/homepage-latest-work.php
+```
+
+This CLI test creates and removes fixture posts, categories, sticky status, and theme mods in that disposable database. It refuses to run without the explicit test-site flag or with existing content. Never enable that flag on a real site. Coverage includes publication order, all category lanes, featured and sticky posts, excluded statuses and post types, automatic publication, output escaping, legacy settings, Customizer registration, and main-loop restoration. Browser acceptance should additionally check 1365px, 390px, and 360px widths, section order, adjacent sections, navigation, footer, and overflow.
 
 ## Scope and license
 

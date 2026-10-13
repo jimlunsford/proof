@@ -283,15 +283,6 @@ function proof_customize_register( $wp_customize ) {
 	);
 
 	$wp_customize->add_section(
-		'proof_identity_latest_work',
-		array(
-			'title'       => __( 'Homepage: Selected Work', 'proof' ),
-			'description' => __( 'Curate up to three pieces that represent the work you want to feature. Leave a title or URL blank to hide a slot.', 'proof' ),
-			'priority'    => 33,
-		)
-	);
-
-	$wp_customize->add_section(
 		'proof_identity_images',
 		array(
 			'title'    => __( 'Homepage: Image Row', 'proof' ),
@@ -443,13 +434,6 @@ function proof_customize_register( $wp_customize ) {
 			'sanitize_callback' => 'proof_sanitize_text_input',
 		),
 
-		'proof_identity_latest_work_heading' => array(
-			'label'             => __( 'Selected Work section heading', 'proof' ),
-			'default'           => 'Selected Work',
-			'type'              => 'text',
-			'section'           => 'proof_identity_latest_work',
-			'sanitize_callback' => 'proof_sanitize_text_input',
-		),
 
 		'proof_identity_social_heading' => array(
 			'label'             => __( 'Social section heading', 'proof' ),
@@ -770,84 +754,6 @@ function proof_customize_register( $wp_customize ) {
 			)
 		);
 		$book_number++;
-	}
-
-	$identity_latest_work_defaults = proof_get_identity_latest_work_defaults();
-	$latest_work_number           = 1;
-
-	foreach ( $identity_latest_work_defaults as $item_key => $item ) {
-		$wp_customize->add_setting(
-			'proof_identity_latest_work_' . $item_key . '_label',
-			array(
-				'default'           => $item['label'],
-				'sanitize_callback' => 'proof_sanitize_text_input',
-			)
-		);
-
-		$wp_customize->add_control(
-			'proof_identity_latest_work_' . $item_key . '_label',
-			array(
-				'section'     => 'proof_identity_latest_work',
-				'label'       => sprintf( __( 'Item %d type label', 'proof' ), $latest_work_number ),
-				'type'        => 'text',
-				'description' => __( 'Examples: Project, Builder Receipt, Recovery Standard.', 'proof' ),
-			)
-		);
-
-		$wp_customize->add_setting(
-			'proof_identity_latest_work_' . $item_key . '_title',
-			array(
-				'default'           => $item['title'],
-				'sanitize_callback' => 'proof_sanitize_text_input',
-			)
-		);
-
-		$wp_customize->add_control(
-			'proof_identity_latest_work_' . $item_key . '_title',
-			array(
-				'section' => 'proof_identity_latest_work',
-				'label'   => sprintf( __( 'Item %d title', 'proof' ), $latest_work_number ),
-				'type'    => 'text',
-			)
-		);
-
-		$wp_customize->add_setting(
-			'proof_identity_latest_work_' . $item_key . '_description',
-			array(
-				'default'           => $item['description'],
-				'sanitize_callback' => 'proof_sanitize_card_description_input',
-			)
-		);
-
-		$wp_customize->add_control(
-			'proof_identity_latest_work_' . $item_key . '_description',
-			array(
-				'section'     => 'proof_identity_latest_work',
-				'label'       => sprintf( __( 'Item %d description', 'proof' ), $latest_work_number ),
-				'type'        => 'textarea',
-				'description' => __( 'Keep this short. The whole item is one link, so links inside this description are shown as text.', 'proof' ),
-			)
-		);
-
-		$wp_customize->add_setting(
-			'proof_identity_latest_work_' . $item_key . '_url',
-			array(
-				'default'           => $item['url'],
-				'sanitize_callback' => 'proof_sanitize_url_input',
-			)
-		);
-
-		$wp_customize->add_control(
-			'proof_identity_latest_work_' . $item_key . '_url',
-			array(
-				'section'     => 'proof_identity_latest_work',
-				'label'       => sprintf( __( 'Item %d URL', 'proof' ), $latest_work_number ),
-				'type'        => 'url',
-				'description' => __( 'Leave blank to remove this item. Remaining items close the gap automatically.', 'proof' ),
-			)
-		);
-
-		$latest_work_number++;
 	}
 
 	$identity_social_defaults = proof_get_identity_social_defaults();

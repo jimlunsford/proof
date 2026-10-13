@@ -1,5 +1,13 @@
 # Proof version history
 
+## 2.0.13
+
+- Replaced the manually curated Selected Work homepage section with automatic Latest Work, showing up to five published posts ordered by original publication date, newest first.
+- Added a dedicated query that includes every category and featured posts, ignores sticky promotion, and excludes unpublished statuses, pages, and custom post types without changing other feeds or archive rules.
+- Reused the existing category and clean-excerpt helpers, canonical post links, accessible single-link list markup, and responsive styles in the same homepage position. Empty results hide the section.
+- Removed the obsolete Selected Work Customizer controls and their unused helpers. The heading is fixed as Latest Work; existing saved theme mods are neither read nor rewritten.
+- Added real-WordPress regression coverage for query behavior, rendering, escaping, legacy settings, Customizer isolation, and post-loop cleanup. Preserved the Published Books regression assertions and updated their section-name label.
+
 ## 2.0.12
 
 - Added the approved Books destination to Start Here before About, reusing the existing book setting IDs and preserving all other saved destinations.
