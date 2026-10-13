@@ -54,7 +54,7 @@ check( false === strpos( $html, '<img onerror=' ), 'Description escaped' );
 check( false !== strpos( $html, '(max-width: 380px) 90px, 112px' ), 'Responsive cover sizes' );
 $GLOBALS['proof_test_mods'] = array();
 $identity = file_get_contents( dirname( __DIR__ ) . '/template-parts/home/identity-hub.php' );
-check( strpos( $identity, "'template-parts/home/published-books'" ) < strpos( $identity, "'template-parts/home/latest-work'" ), 'Book template before Selected Work' );
+check( strpos( $identity, "'template-parts/home/published-books'" ) < strpos( $identity, "'template-parts/home/latest-work'" ), 'Book template before Latest Work' );
 $css = file_get_contents( dirname( __DIR__ ) . '/assets/css/homepage-books.css' );
 check( false !== strpos( $css, 'grid-template-columns: 112px minmax(0, 1fr)' ), 'Approved desktop book geometry' );
 check( false !== strpos( $css, '@media (max-width: 760px)' ), 'Mobile stacking breakpoint' );

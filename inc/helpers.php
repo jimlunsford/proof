@@ -525,52 +525,20 @@ function proof_get_identity_published_books() {
 	);
 }
 
-function proof_get_identity_latest_work_heading() {
-	$default = 'Selected Work';
-	return trim( get_theme_mod( 'proof_identity_latest_work_heading', $default ) );
-}
-
-function proof_get_identity_latest_work_defaults() {
-	return array(
-		'one' => array(
-			'label'       => 'Project',
-			'title'       => 'Bonumark Stream v0.6.0 Is Here',
-			'description' => 'Bonumark Stream v0.6.0 adds public profiles, Theme Architecture 2.0, and a rebuilt Midnight Ledger theme for richer self-hosted publishing.',
-			'url'         => home_url( '/bonumark-stream-v0-6-0-is-here/' ),
-		),
-		'two' => array(
-			'label'       => 'Builder Receipt',
-			'title'       => 'Builder Receipt: Bonumark’s Theme Architecture',
-			'description' => 'How Bonumark Stream’s theme architecture evolved while Core kept ownership of behavior, security, data, publishing, and rendering.',
-			'url'         => home_url( '/builder-receipt-bonumarks-theme-architecture/' ),
-		),
-		'three' => array(
-			'label'       => 'Recovery Standard',
-			'title'       => 'Recovery Standard: Strong Boundaries',
-			'description' => 'A better life requires stronger boundaries around time, energy, sleep, routines, standards, and recovery.',
-			'url'         => home_url( '/recovery-standard-strong-boundaries/' ),
-		),
-	);
-}
-
-function proof_get_identity_latest_work_items() {
-	$items = proof_get_identity_latest_work_defaults();
-
-	foreach ( $items as $item_key => &$item ) {
-		$item['label']       = trim( get_theme_mod( 'proof_identity_latest_work_' . $item_key . '_label', $item['label'] ) );
-		$item['title']       = trim( get_theme_mod( 'proof_identity_latest_work_' . $item_key . '_title', $item['title'] ) );
-		$item['description'] = trim( get_theme_mod( 'proof_identity_latest_work_' . $item_key . '_description', $item['description'] ) );
-		$item['url']         = esc_url( get_theme_mod( 'proof_identity_latest_work_' . $item_key . '_url', $item['url'] ) );
-	}
-
-	unset( $item );
-
-	return array_values(
-		array_filter(
-			$items,
-			function( $item ) {
-				return ! empty( $item['title'] ) && ! empty( $item['url'] );
-			}
+/**
+ * Homepage Latest Work includes every category and featured post.
+ * Keep this separate from the curated exclusions used by other feeds.
+ */
+function proof_get_identity_latest_work_query() {
+	return new WP_Query(
+		array(
+			'post_type'           => 'post',
+			'post_status'         => 'publish',
+			'posts_per_page'      => 5,
+			'orderby'             => 'date',
+			'order'               => 'DESC',
+			'ignore_sticky_posts' => true,
+			'no_found_rows'       => true,
 		)
 	);
 }

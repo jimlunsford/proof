@@ -1,6 +1,6 @@
 <?php
 /**
- * Compact book discovery between Start Here and Selected Work.
+ * Compact book discovery between Start Here and Latest Work.
  */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
