@@ -85,6 +85,10 @@ function proof_configure_category_query( $query ) {
 	$term = $query->get_queried_object();
 	$slug = $term instanceof WP_Term ? $term->slug : '';
 	$featured_ids = proof_get_lane_featured_post_ids( $slug );
+	// Keep the featured-only category index nonempty for canonical/robots SEO.
+	if ( proof_category_keep_featured_in_query( $slug, $term, $featured_ids ) ) {
+		$featured_ids = array();
+	}
 	$excluded_ids = array_map( 'absint', (array) $query->get( 'post__not_in' ) );
 
 	$query->set( 'post_type', 'post' );

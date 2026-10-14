@@ -1033,6 +1033,19 @@ function proof_get_lane_featured_urls( $slug, $lane = array() ) {
 	return array_values( array_filter( $urls ) );
 }
 
+/**
+ * Do not empty the new story category main query when all published posts
+ * are presented as featured. An empty main query causes The SEO Framework to
+ * noindex the category and omit its canonical, despite visible featured posts.
+ * The archive template suppresses their duplicate feed entries on page one.
+ */
+function proof_category_keep_featured_in_query( $slug, $term, $featured_ids ) {
+    return 'law-enforcement-corrections' === $slug
+        && $term instanceof WP_Term
+        && (int) $term->count > 0
+        && (int) $term->count === count( $featured_ids );
+}
+
 function proof_get_lane_featured_post_ids( $slug, $lane = array() ) {
 	$urls = proof_get_lane_featured_urls( $slug, $lane );
 	$ids  = array();

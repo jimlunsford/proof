@@ -29,7 +29,16 @@ $is_law_archive = 'law-enforcement-corrections' === $slug;
 	}
 	?>
 
-	<?php if ( ! $is_law_archive || $GLOBALS['wp_query']->have_posts() ) : ?>
+	<?php
+	$has_recent = ! $is_law_archive || $GLOBALS['wp_query']->have_posts();
+	if ( $is_law_archive && $is_first_page && $has_recent ) {
+		// With only one published story it stays in WordPress's main query for
+		// SEO, but appears exclusively in Featured Stories, not twice.
+		$recent_ids = array_map( 'absint', array_column( $GLOBALS['wp_query']->posts, 'ID' ) );
+		$has_recent = (bool) array_diff( $recent_ids, $featured_ids );
+	}
+	if ( $has_recent ) :
+	?>
 	<section class="proof-block">
 		<div class="proof-section-heading">
 			<h2><?php echo $is_law_archive ? esc_html__( 'Recent Stories', 'proof' ) : esc_html__( 'Recent Posts', 'proof' ); ?></h2>
