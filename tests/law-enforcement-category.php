@@ -12,10 +12,12 @@ class WP_Term {
     public $term_id;
     public $slug;
     public $name;
-    public function __construct( $id, $slug, $name ) {
+    public $count;
+    public function __construct( $id, $slug, $name, $count = 1 ) {
         $this->term_id = $id;
         $this->slug = $slug;
         $this->name = $name;
+        $this->count = $count;
     }
 }
 class WP_Post {
@@ -144,9 +146,13 @@ law_check( 'Law Enforcement & Corrections' === $lane['title'], 'Category lane ti
 law_check( '' === $lane['description'], 'Editable WordPress description is the source of truth.' );
 law_check( get_permalink( 2630 ) === $lane['start_here_url'], 'Published start-here permalink.' );
 law_check( array( 2630 ) === proof_get_lane_featured_post_ids( 'law-enforcement-corrections', $lane ), 'Published article is the single feature.' );
+law_check( proof_category_keep_featured_in_query( 'law-enforcement-corrections', $GLOBALS['proof_test_term'], array( 2630 ) ), 'Featured-only live category must retain the article in the WordPress main query for SEO.' );
+law_check( ! proof_category_keep_featured_in_query( 'law-enforcement-corrections', new WP_Term( 46, 'law-enforcement-corrections', 'Law Enforcement & Corrections', 2 ), array( 2630 ) ), 'With new stories published, original featured exclusion and pagination must resume.' );
+law_check( ! proof_category_keep_featured_in_query( 'law-enforcement-corrections', $GLOBALS['proof_test_term'], array() ), 'No published feature must not alter an empty category query.' );
+law_check( ! proof_category_keep_featured_in_query( 'articles', $GLOBALS['proof_test_term'], array( 2630 ) ), 'Existing categories must keep their exclusion rules.' );
 
 // Initial live state: the sole published post is shown as Featured Stories, not duplicated or followed by an empty feed.
-$html = law_render_category( array() );
+$html = law_render_category( array( $GLOBALS['proof_test_posts'][2630] ) );
 law_check( false !== strpos( $html, '<h1 class="proof-page-title">' ), 'Category title is present.' );
 law_check( false !== strpos( $html, 'Firsthand accounts from my years in law enforcement and corrections.' ), 'WP category description is visible as plain text.' );
 law_check( false === strpos( $html, '<strong>corrections</strong>' ), 'Category description strips unsafe/unwanted HTML.' );
