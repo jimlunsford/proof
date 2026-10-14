@@ -94,7 +94,7 @@ try {
 	proof_latest_check( $outer_post === $GLOBALS['post'], 'Empty results must leave the outer post untouched.' );
 
 	$eligible = array();
-	$categories = array( 'Articles', 'Projects', 'Recovery Standards', 'Discipline Dispatch', 'Notes', 'Recovery Beyond AA' );
+	$categories = array( 'Articles', 'Projects', 'Law Enforcement & Corrections', 'Recovery Standards', 'Discipline Dispatch', 'Notes', 'Recovery Beyond AA' );
 	foreach ( $categories as $index => $name ) {
 		$term = wp_insert_term( $name, 'category' );
 		if ( is_wp_error( $term ) ) {

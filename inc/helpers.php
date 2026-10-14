@@ -431,6 +431,11 @@ function proof_get_identity_destination_defaults() {
 			'description' => 'Software, websites, tools, and systems I am building around ownership, portability, structure, and practical use.',
 			'url'         => proof_get_projects_url(),
 		),
+		'law_enforcement'   => array(
+			'title'       => 'Law Enforcement & Corrections',
+			'description' => 'Firsthand stories from my years in law enforcement and corrections, including investigations, arrests, warrant service, and the experiences that shaped me.',
+			'url'         => proof_get_category_archive_url( 'law-enforcement-corrections' ),
+		),
 		'core_frameworks'    => array(
 			'title'       => 'Core Frameworks',
 			'description' => 'The ideas behind the work: higher standards, discipline, self-trust, identity rebuild, ownership, and recovery without dependency.',
@@ -929,6 +934,7 @@ function proof_get_problem_routes() {
 }
 
 function proof_get_lane_data() {
+	$law_intro_post_id = proof_get_post_id_by_path( 'why-i-loved-the-work' );
 	return array(
 		'articles'             => array(
 			'title'          => 'Articles',
@@ -950,6 +956,14 @@ function proof_get_lane_data() {
 				'stop-waiting-for-life-to-get-easier',
 				'if-its-meant-to-be-is-a-lie',
 				'why-discipline-isnt-about-willpower',
+			),
+		),
+		'law-enforcement-corrections' => array(
+			'title'          => 'Law Enforcement & Corrections',
+			'description'    => '', // Read the editable WordPress category description.
+			'start_here_url' => $law_intro_post_id ? get_permalink( $law_intro_post_id ) : '',
+			'featured_paths' => array(
+				'why-i-loved-the-work',
 			),
 		),
 		'recovery-standards'   => array(
