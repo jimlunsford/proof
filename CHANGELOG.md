@@ -1,5 +1,14 @@
 # Proof version history
 
+## 2.0.14
+
+- Added Law Enforcement & Corrections to homepage Start Here immediately after Projects, with existing card styling and independent Customizer fields.
+- Added published-only Start Here and featured-story treatment for Why I Loved the Work, with no duplicate listing in the paginated feed.
+- Used the editable WordPress category description for this category and as a fallback for unconfigured archive descriptions, keeping existing configured text intact.
+- Labeled this category Featured Stories and Recent Stories, hiding an empty Recent Stories section until more stories are published. Other category headings, pagination, and queries retain their behavior.
+- Extended the offline destination tests and category integration coverage. Production deployment remains separate.
+
+
 ## 2.0.13
 
 - Replaced the manually curated Selected Work homepage section with automatic Latest Work, showing up to five published posts ordered by original publication date, newest first.

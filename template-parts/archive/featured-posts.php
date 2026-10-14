@@ -15,7 +15,7 @@ if ( empty( $featured_ids ) ) {
 ?>
 <section class="proof-block">
 	<div class="proof-section-heading">
-		<h2><?php esc_html_e( 'Core Posts', 'proof' ); ?></h2>
+		<h2><?php echo esc_html( get_query_var( 'proof_featured_heading', __( 'Core Posts', 'proof' ) ) ); ?></h2>
 	</div>
 
 	<div class="proof-post-feed proof-post-feed-featured">

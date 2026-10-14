@@ -2,7 +2,7 @@
 
 Proof is the custom classic WordPress theme powering [JimLunsford.com](https://jimlunsford.com/). It is a text-first publishing system built around long-form reading, an identity-focused homepage, distinct content lanes, and a growing body of writing and project work. The site is public and actively used; this repository holds the theme's development source.
 
-**Current repository version:** 2.0.13.
+**Current repository version:** 2.0.14.
 
 ## What Proof was built to do
 
@@ -46,6 +46,12 @@ Latest Work displays the five newest published WordPress posts after Published B
 The dedicated `proof_get_identity_latest_work_query()` orders by original publication date, newest first. Editing an older post or making it sticky does not promote it. Drafts, pending posts, scheduled posts not yet published, private posts, trash, pages, and custom post types are excluded. Fewer than five eligible posts produces a shorter list; no eligible posts hides the section. Publishing a post updates the list through the normal WordPress query, without manual slots, synchronization, or an additional plugin.
 
 The heading is fixed as **Latest Work**. The retired Selected Work Customizer section, heading, and three manual slots are no longer registered or read. Existing `proof_identity_latest_work_*` theme mods remain stored unchanged; no migration or database cleanup runs. Other Customizer settings, the separate recent-writing feed, and category archive exclusions and pagination retain their existing behavior.
+
+## Law Enforcement & Corrections
+
+The WordPress category at /category/law-enforcement-corrections/ is a first-person story archive. Its editable WordPress category description provides the introduction, and the published post Why I Loved the Work is both its Start Here destination and initial Featured Stories entry. The feature resolves only while the post is published, then is excluded from the paginated Recent Stories main query to avoid duplicates. When it is the only published article, the empty Recent Stories section is omitted. New published stories enter the normal 12-post-per-page category query automatically.
+
+The homepage Start Here section provides an editable Law Enforcement & Corrections destination directly after Projects and before Core Frameworks. It uses existing destination cards, responsive styling, and Customizer settings; the theme does not modify a WordPress navigation menu. Existing category descriptions, featured selections, and headings are preserved. Categories without a configured description can now display their editable WordPress category descriptions.
 
 ## Development
 

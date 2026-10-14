@@ -5,6 +5,9 @@ define( 'ABSPATH', __DIR__ . '/' );
 $GLOBALS['proof_test_mods'] = array();
 function get_theme_mod( $key, $default = false ) { return array_key_exists( $key, $GLOBALS['proof_test_mods'] ) ? $GLOBALS['proof_test_mods'][ $key ] : $default; }
 function home_url( $path = '' ) { return 'https://jimlunsford.com' . $path; }
+class WP_Term { public $slug; public function __construct( $slug ) { $this->slug = $slug; } }
+function get_category_by_slug( $slug ) { return 'law-enforcement-corrections' === $slug ? new WP_Term( $slug ) : false; }
+function get_category_link( $term ) { return home_url( '/category/' . $term->slug . '/' ); }
 function absint( $value ) { return abs( (int) $value ); }
 function esc_url( $value ) { return preg_match( '#^https?://#', $value ) ? htmlspecialchars( $value, ENT_QUOTES, 'UTF-8' ) : ''; }
 function esc_html( $value ) { return htmlspecialchars( $value, ENT_QUOTES, 'UTF-8' ); }
@@ -19,6 +22,9 @@ function check( $condition, $message ) { global $checks; if ( ! $condition ) { t
 function render_books() { ob_start(); include dirname( __DIR__ ) . '/template-parts/home/published-books.php'; return ob_get_clean(); }
 $defaults = proof_get_identity_destination_defaults();
 $keys = array_keys( $defaults );
+check( array_search( 'law_enforcement', $keys, true ) === array_search( 'projects', $keys, true ) + 1, 'Law Enforcement follows Projects' );
+check( array_search( 'core_frameworks', $keys, true ) === array_search( 'law_enforcement', $keys, true ) + 1, 'Core Frameworks follows Law Enforcement' );
+check( home_url( '/category/law-enforcement-corrections/' ) === $defaults['law_enforcement']['url'], 'Canonical category destination' );
 check( array_search( 'book', $keys, true ) === array_search( 'core_frameworks', $keys, true ) + 1, 'Books follows Core Frameworks' );
 check( array_search( 'about', $keys, true ) === array_search( 'book', $keys, true ) + 1, 'About follows Books' );
 check( 'Books' === $defaults['book']['title'], 'Books default title' );
@@ -26,9 +32,12 @@ check( home_url( '/books/' ) === $defaults['book']['url'], 'Catalog destination'
 foreach ( array( 'microblog', 'articles', 'contact' ) as $key ) { $GLOBALS['proof_test_mods'][ 'proof_identity_destination_' . $key . '_url' ] = ''; }
 $GLOBALS['proof_test_mods']['proof_identity_destination_about_title'] = 'About Jim Lunsford';
 $links = proof_get_identity_destination_links();
-check( array( 'The Work', 'Projects', 'Core Frameworks', 'Books', 'About Jim Lunsford' ) === array_column( $links, 'title' ), 'Approved five destination order' );
+check( array( 'The Work', 'Projects', 'Law Enforcement & Corrections', 'Core Frameworks', 'Books', 'About Jim Lunsford' ) === array_column( $links, 'title' ), 'Approved six destination order' );
+$GLOBALS['proof_test_mods']['proof_identity_destination_law_enforcement_url'] = '';
+check( array( 'The Work', 'Projects', 'Core Frameworks', 'Books', 'About Jim Lunsford' ) === array_column( proof_get_identity_destination_links(), 'title' ), 'Blank saved Law Enforcement URL hides just that card' );
+unset( $GLOBALS['proof_test_mods']['proof_identity_destination_law_enforcement_url'] );
 $GLOBALS['proof_test_mods']['proof_identity_destination_book_url'] = '';
-check( 4 === count( proof_get_identity_destination_links() ), 'Existing blank book override preserved' );
+check( 5 === count( proof_get_identity_destination_links() ), 'Existing blank book override preserved' );
 unset( $GLOBALS['proof_test_mods']['proof_identity_destination_book_url'] );
 $books = proof_get_identity_published_books();
 check( 2 === count( $books ), 'Exactly two default books' );

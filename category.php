@@ -12,6 +12,7 @@ $lane = proof_get_lane_config( $slug );
 $featured_ids = proof_get_lane_featured_post_ids( $slug, $lane );
 $current_page = max( 1, (int) get_query_var( 'paged' ) );
 $is_first_page = 1 === $current_page;
+$is_law_archive = 'law-enforcement-corrections' === $slug;
 ?>
 
 <div class="proof-container proof-archive-layout">
@@ -23,18 +24,19 @@ $is_first_page = 1 === $current_page;
 
 	if ( $is_first_page ) {
 		set_query_var( 'proof_featured_ids', $featured_ids );
+		set_query_var( 'proof_featured_heading', $is_law_archive ? __( 'Featured Stories', 'proof' ) : __( 'Core Posts', 'proof' ) );
 		get_template_part( 'template-parts/archive/featured-posts' );
 	}
 	?>
 
+	<?php if ( ! $is_law_archive || $GLOBALS['wp_query']->have_posts() ) : ?>
 	<section class="proof-block">
 		<div class="proof-section-heading">
-			<h2><?php esc_html_e( 'Recent Posts', 'proof' ); ?></h2>
+			<h2><?php echo $is_law_archive ? esc_html__( 'Recent Stories', 'proof' ) : esc_html__( 'Recent Posts', 'proof' ); ?></h2>
 		</div>
 
 		<?php proof_the_posts_grid( $GLOBALS['wp_query'] ); ?>
 		<?php
-		set_query_var( 'proof_show_feed_category', null );
 		$proof_pagination = paginate_links(
 			array(
 				'total'   => max( 1, (int) $GLOBALS['wp_query']->max_num_pages ),
@@ -49,10 +51,15 @@ $is_first_page = 1 === $current_page;
 			</nav>
 			<?php
 		endif;
-		set_query_var( 'proof_archive_compact', null );
-		set_query_var( 'proof_featured_ids', null );
 		?>
 	</section>
+	<?php endif; ?>
+	<?php
+	set_query_var( 'proof_show_feed_category', null );
+	set_query_var( 'proof_archive_compact', null );
+	set_query_var( 'proof_featured_ids', null );
+	set_query_var( 'proof_featured_heading', null );
+	?>
 </div>
 
 <?php
