@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once get_template_directory() . '/inc/helpers.php';
+require_once get_template_directory() . '/inc/projects-pagination-seo.php';
 
 function proof_setup() {
 	load_theme_textdomain( 'proof', get_template_directory() . '/languages' );
