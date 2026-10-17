@@ -1,5 +1,12 @@
 # Proof version history
 
+## 2.0.15
+
+- Corrected SEO metadata for the paginated Projects page's six-post secondary query using The SEO Framework 5.2 native filters: self-referencing canonical, Open Graph URL, and schema WebPage URL/ID/ReadAction.
+- Return a real HTTP 404 instead of a valid-looking page for Projects pagination beyond the available posts.
+- Preserve the Redirection plugin's existing page-one category alias. Map deeper, formerly accessible 12-post category pages to the corresponding six-post Projects page starting at the same article.
+- Scoped every new condition to Projects. The curated cards, page design, existing post order, category taxonomy, other archives, and unrelated SEO remain unchanged.
+
 ## 2.0.14
 
 - Added Law Enforcement & Corrections to homepage Start Here immediately after Projects, with existing card styling and independent Customizer fields.
