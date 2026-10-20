@@ -7,7 +7,7 @@
 - Repair Latest Work's contradictory fixture arrangement and add an older featured Projects exclusion check without changing the five-newest publication rule or weakening existing assertions.
 - Include the visible Explore Book label and each book title in accessible link names. Restore focus to a visible menu/search control when Escape closes a disclosure, preserving ordinary Tab and click-away behavior.
 - Add offline CI, focused excerpt and browser regressions, and real WordPress/SEO Framework HTTP checks with a historical canonical-failure negative control. Correct test terminology and document the current flat Projects taxonomy boundary and outstanding deployment prerequisites.
-- Candidate only. Repository review and any production deployment remain separate decisions.
+- Accepted into `main` and installed on JimLunsford.com on October 20, 2026.
 
 ## 2.0.15
 
