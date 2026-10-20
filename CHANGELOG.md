@@ -1,5 +1,14 @@
 # Proof version history
 
+## 2.0.16
+
+- Honor WordPress password access before reading manual excerpts, post bodies, and the custom article deck/source fields. Ordinary public summaries and valid-password access retain their existing presentation.
+- Keep nested Gutenberg child blocks aligned with their serialization placeholders during excerpt cleanup. Preserve narrative mentioning newsletters while removing actual subscription forms and the known subscription CTA without executing shortcodes.
+- Repair Latest Work's contradictory fixture arrangement and add an older featured Projects exclusion check without changing the five-newest publication rule or weakening existing assertions.
+- Include the visible Explore Book label and each book title in accessible link names. Restore focus to a visible menu/search control when Escape closes a disclosure, preserving ordinary Tab and click-away behavior.
+- Add offline CI, focused excerpt and browser regressions, and real WordPress/SEO Framework HTTP checks with a historical canonical-failure negative control. Correct test terminology and document the current flat Projects taxonomy boundary and outstanding deployment prerequisites.
+- Candidate only. Repository review and any production deployment remain separate decisions.
+
 ## 2.0.15
 
 - Corrected SEO metadata for the paginated Projects page's six-post secondary query using The SEO Framework 5.2 native filters: self-referencing canonical, Open Graph URL, and schema WebPage URL/ID/ReadAction.
@@ -14,7 +23,7 @@
 - Used the editable WordPress category description for this category and as a fallback for unconfigured archive descriptions, keeping existing configured text intact.
 - Labeled this category Featured Stories and Recent Stories, hiding an empty Recent Stories section until more stories are published. Other category headings, pagination, and queries retain their behavior.
 - Corrected the featured-only category query so the first published story keeps the archive canonical and indexability while still appearing only once. The existing exclusion and 12-post pagination resume when additional stories are published.
-- Extended the offline destination tests and category integration coverage. Production deployment remains separate.
+- Extended the offline destination tests and stubbed category coverage (not real WordPress/SEO Framework integration). Production deployment remains separate.
 
 
 ## 2.0.13

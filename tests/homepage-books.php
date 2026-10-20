@@ -45,7 +45,12 @@ check( array( 2586, 2615 ) === array_column( $books, 'image_id' ), 'Approved med
 $html = render_books();
 check( 2 === substr_count( $html, '<article ' ), 'Two rendered features' );
 check( false !== strpos( $html, 'View All Books' ), 'Catalog link visible' );
-check( false !== strpos( $html, 'aria-label="Explore The PERIOD Code"' ), 'Distinct accessible link labels' );
+check( false !== strpos( $html, 'aria-label="Explore Book: The PERIOD Code"' ), 'First book accessible name contains the visible label and title' );
+check( false !== strpos( $html, 'aria-label="Explore Book: The Disciplined Operator"' ), 'Second book accessible name contains the visible label and distinct title' );
+check( 2 === substr_count( $html, '>Explore Book</a>' ), 'Both visible book labels remain unchanged' );
+foreach ( $books as $book ) {
+	check( false !== strpos( $html, 'href="' . esc_url( $book['url'] ) . '" aria-label="Explore Book: ' . esc_attr( $book['title'] ) . '"' ), 'Each book retains its configured destination' );
+}
 check( false === strpos( $html, 'amazon.com' ), 'Homepage links to book pages rather than adding checkout buttons' );
 check( false === strpos( $html, 'Useless Eaters' ), 'No excluded title' );
 $GLOBALS['proof_test_mods']['proof_identity_published_books_one_title'] = '';

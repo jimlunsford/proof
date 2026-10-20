@@ -1,0 +1,14 @@
+{
+  "name": "proof-seo-integration-tests",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24.18", "npm": ">=11.16" },
+  "scripts": { "test": "node --experimental-wasm-jspi run.mjs", "browser": "node browser.mjs" },
+  "devDependencies": {
+    "@php-wasm/node": "3.1.59",
+    "@wp-playground/blueprints": "3.1.59",
+    "@wp-playground/cli": "3.1.59",
+    "@wp-playground/wordpress": "3.1.59",
+    "playwright": "1.62.1"
+  }
+}
