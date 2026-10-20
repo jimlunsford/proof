@@ -37,7 +37,7 @@ if ( empty( $books ) ) {
 					<?php if ( '' !== $book['description'] ) : ?>
 						<p><?php echo esc_html( $book['description'] ); ?></p>
 					<?php endif; ?>
-					<a href="<?php echo esc_url( $book['url'] ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'Explore %s', 'proof' ), $book['title'] ) ); ?>"><?php esc_html_e( 'Explore Book', 'proof' ); ?></a>
+					<a href="<?php echo esc_url( $book['url'] ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'Explore Book: %s', 'proof' ), $book['title'] ) ); ?>"><?php esc_html_e( 'Explore Book', 'proof' ); ?></a>
 				</div>
 			</article>
 		<?php endforeach; ?>

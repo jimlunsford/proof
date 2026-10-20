@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$deck = get_post_meta( get_the_ID(), 'proof_deck', true );
+$deck = post_password_required() ? '' : get_post_meta( get_the_ID(), 'proof_deck', true );
 ?>
 <header class="proof-post-header">
 	<h1 class="proof-page-title"><?php the_title(); ?></h1>

@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	const nav = document.querySelector('.proof-primary-nav');
 	const navSearchToggle = document.querySelector('.proof-nav-search-link');
 	const searchPanel = document.querySelector('.proof-search-panel');
+	let searchFocusTimeout;
 
 	if (!menuToggle || !nav || !searchPanel) {
 		return;
@@ -15,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	};
 
 	const setSearchState = function (isOpen) {
+		window.clearTimeout(searchFocusTimeout);
 		searchPanel.hidden = !isOpen;
 		searchPanel.classList.toggle('is-open', isOpen);
 		if (navSearchToggle) {
@@ -47,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		if (isOpening) {
 			const input = searchPanel.querySelector('.search-field');
 			if (input) {
-				window.setTimeout(function () {
+				searchFocusTimeout = window.setTimeout(function () {
 					input.focus();
 				}, 30);
 			}
@@ -74,9 +76,17 @@ document.addEventListener('DOMContentLoaded', function () {
 	});
 
 	document.addEventListener('keydown', function (event) {
-		if (event.key === 'Escape') {
+		if (event.key === 'Escape' && (nav.classList.contains('is-open') || !searchPanel.hidden)) {
+			const wasSearchOpen = !searchPanel.hidden;
 			closeMenu();
 			closeSearch();
+			// The search trigger lives inside the closed menu. Prefer it only
+			// when it remains visible; otherwise return to the menu control.
+			const control = wasSearchOpen && navSearchToggle && navSearchToggle.getClientRects().length && window.getComputedStyle(navSearchToggle).visibility !== 'hidden' ? navSearchToggle : menuToggle;
+			if (control.getClientRects().length && window.getComputedStyle(control).visibility !== 'hidden') {
+				control.focus();
+			}
+			event.preventDefault();
 		}
 	});
 });

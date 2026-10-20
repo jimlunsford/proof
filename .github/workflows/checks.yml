@@ -1,0 +1,35 @@
+name: Theme checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  offline:
+    name: PHP ${{ matrix.php }} offline checks
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.4', '8.3']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: PHP syntax
+        run: git ls-files -z '*.php' | xargs -0 -n1 php -l
+      - name: JavaScript syntax
+        run: git ls-files -z '*.js' '*.mjs' | xargs -0 -n1 node --check
+      - name: Offline regressions
+        run: |
+          php tests/homepage-books.php
+          php tests/law-enforcement-category.php
+          php tests/projects-pagination-seo.php

@@ -94,7 +94,8 @@ try {
 	proof_latest_check( $outer_post === $GLOBALS['post'], 'Empty results must leave the outer post untouched.' );
 
 	$eligible = array();
-	$categories = array( 'Articles', 'Projects', 'Law Enforcement & Corrections', 'Recovery Standards', 'Discipline Dispatch', 'Notes', 'Recovery Beyond AA' );
+	// Place the featured Projects fixture deliberately inside the newest five.
+	$categories = array( 'Articles', 'Law Enforcement & Corrections', 'Recovery Standards', 'Projects', 'Discipline Dispatch', 'Notes', 'Recovery Beyond AA' );
 	foreach ( $categories as $index => $name ) {
 		$term = wp_insert_term( $name, 'category' );
 		if ( is_wp_error( $term ) ) {
@@ -103,7 +104,7 @@ try {
 		$term_ids[] = $term['term_id'];
 		$eligible[] = proof_latest_fixture( array(
 			'post_title'    => 'Fixture in ' . $name,
-			'post_name'     => 1 === $index ? proof_get_home_featured_paths()[0] : sanitize_title( 'fixture ' . $name ),
+			'post_name'     => 'Projects' === $name ? proof_get_home_featured_paths()[0] : sanitize_title( 'fixture ' . $name ),
 			'post_category' => array( $term['term_id'] ),
 			'post_date'     => gmdate( 'Y-m-d H:i:s', time() - ( 10 - $index ) * DAY_IN_SECONDS ),
 		) );
@@ -113,8 +114,16 @@ try {
 		proof_latest_check( min( 5, count( $eligible ) ) === $dom->query( '//li' )->length, 'Render exactly the available posts, capped at five.' );
 		proof_latest_check( $name === $dom->query( '//span[@class="proof-identity-latest-label"]' )->item( 0 )->textContent, 'Use the real category label for ' . $name );
 	}
-	proof_latest_check( in_array( $eligible[1], proof_get_home_featured_ids(), true ), 'Projects fixture must also exercise the existing featured-post exclusion.' );
-	proof_latest_check( in_array( $eligible[1], proof_latest_ids(), true ), 'Featured Projects post must remain in Latest Work.' );
+	proof_latest_check( in_array( $eligible[3], proof_get_home_featured_ids(), true ), 'Projects fixture must also exercise the existing featured-post exclusion.' );
+	proof_latest_check( in_array( $eligible[3], proof_latest_ids(), true ), 'Featured Projects post must remain in Latest Work.' );
+	$older_featured = proof_latest_fixture( array(
+		'post_title'    => 'Older featured Projects post',
+		'post_name'     => proof_get_home_featured_paths()[1],
+		'post_category' => array( $term_ids[3] ),
+	) );
+	proof_latest_check( in_array( $older_featured, proof_get_home_featured_ids(), true ), 'Older Projects fixture must also be a curated featured post.' );
+	proof_latest_check( ! in_array( $older_featured, proof_latest_ids(), true ), 'An older featured Projects post must remain outside the newest five.' );
+	proof_latest_check( $expected === proof_latest_ids(), 'Featured status must not displace a newer eligible post.' );
 
 	$older = proof_latest_fixture( array( 'post_title' => 'Older sticky post' ) );
 	stick_post( $older );

@@ -7,6 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+if ( post_password_required() ) {
+	return;
+}
+
 $sources_support = get_post_meta( get_the_ID(), 'proof_sources_support', true );
 
 if ( empty( $sources_support ) ) {

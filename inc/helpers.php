@@ -1160,7 +1160,24 @@ function proof_filter_excerpt_blocks( $blocks ) {
 		}
 
 		if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
-			$block['innerBlocks'] = proof_filter_excerpt_blocks( $block['innerBlocks'] );
+			// Each null fragment serializes the child at the same position. Remove
+			// that placeholder with its child, preserving surrounding wrapper HTML.
+			$children              = $block['innerBlocks'];
+			$block['innerBlocks']   = array();
+			$inner_content         = array();
+			$child_index           = 0;
+			foreach ( $block['innerContent'] as $fragment ) {
+				if ( null !== $fragment ) {
+					$inner_content[] = $fragment;
+					continue;
+				}
+				$child = proof_filter_excerpt_blocks( array( $children[ $child_index++ ] ) );
+				if ( $child ) {
+					$block['innerBlocks'][] = $child[0];
+					$inner_content[]       = null;
+				}
+			}
+			$block['innerContent'] = $inner_content;
 		}
 
 		if ( proof_is_excerpt_noise_block( $block ) ) {
@@ -1175,60 +1192,31 @@ function proof_filter_excerpt_blocks( $blocks ) {
 
 function proof_is_excerpt_noise_block( $block ) {
 	$block_name = isset( $block['blockName'] ) ? strtolower( (string) $block['blockName'] ) : '';
-	$haystack   = wp_strip_all_tags( serialize_block( $block ), true );
-	$haystack   = preg_replace( '/\s+/', ' ', $haystack );
-
-	if ( '' === trim( $haystack ) ) {
-		return false;
-	}
-
-	$markers = array(
-		'get the work',
-		'delivered when published',
-		'email address',
-		'mailpoet',
-		'wpforms',
-		'contact-form-7',
-		'gravityform',
-		'newsletter',
-	);
-
-	$has_marker = false;
-
-	foreach ( $markers as $marker ) {
-		if ( false !== stripos( $haystack, $marker ) ) {
-			$has_marker = true;
-			break;
-		}
-	}
-
-	if ( ! $has_marker ) {
-		return false;
-	}
-
-	$noise_block_names = array(
-		'core/html',
-		'core/shortcode',
-		'core/group',
-		'core/buttons',
-		'core/button',
+	$form_block_names = array(
 		'jetpack/subscriptions',
 		'mailpoet/subscription-form',
 		'wpforms/form-selector',
 	);
-
-	if ( in_array( $block_name, $noise_block_names, true ) ) {
+	if ( in_array( $block_name, $form_block_names, true ) ) {
 		return true;
 	}
 
-	return preg_match( '/\b(email address|delivered when published|get the work)\b/i', $haystack ) && strlen( $haystack ) < 500;
+	// Containers may mix useful narrative with a form. Their children are
+	// filtered independently; a word such as "newsletter" is not a form.
+	if ( ! empty( $block['innerBlocks'] ) ) {
+		return false;
+	}
+	$text = trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( serialize_block( $block ), true ) ) );
+	return (bool) preg_match( '/^(?:Get the Work|Delivered when published|Email Address|Subscribe(?: to (?:(?:the|my|our) )?newsletter)?|Sign up for (?:(?:the|my|our) )?newsletter|Articles on discipline, recovery, identity, and ownership)[.!:]?$/i', $text );
 }
 
 function proof_remove_excerpt_noise_phrases( $text ) {
 	$text = (string) $text;
 
 	$patterns = array(
-		'/\bGet the Work\s+Articles on discipline, recovery, identity, and ownership\.\s+Delivered when published\.\s+Email Address\s*(Subscribe)?\b/i',
+		// The form may already be removed, including its Email Address label.
+		// Compact HTML need not leave whitespace between these exact CTA labels.
+		'/\bGet the Work\s*Articles on discipline, recovery, identity, and ownership\.\s*Delivered when published\.(?:\s*Email Address\s*(?:Subscribe)?)?/i',
 		'/\bGet the Work\s+.*?\s+Delivered when published\.\s+Email Address\s*(Subscribe)?\b/i',
 		'/\bDelivered when published\.\s+Email Address\s*(Subscribe)?\b/i',
 	);
@@ -1243,7 +1231,7 @@ function proof_remove_excerpt_noise_phrases( $text ) {
 function proof_get_clean_excerpt( $post_id = 0, $word_limit = 28 ) {
 	$post_id = $post_id ? (int) $post_id : get_the_ID();
 
-	if ( ! $post_id ) {
+	if ( ! $post_id || post_password_required( $post_id ) ) {
 		return '';
 	}
 
