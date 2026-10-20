@@ -70,7 +70,7 @@ The HTTP runner exercises WordPress 7.1.3 with PHP 8.3, SQLite, The SEO Framewor
 
 It covers Law Enforcement's sole-feature, additional-article, and unpublished-feature states; valid and invalid Projects pages; legacy category aliases; an unrelated archive; real canonical/indexability output; schema references; and exact article membership.
 
-The test also uses the exact original failing 2.0.14 source commit as a historical negative control. Keep the relevant Git history available. An expected negative-control failure is not a failure of the current candidate.
+The test also uses the exact original failing 2.0.14 source commit as a historical negative control. Keep the relevant Git history available. An expected negative-control failure is not a failure of the current source version.
 
 The browser runner uses Chromium on disposable content at widths 1365, 768, 390, and 360 pixels. It exercises real Tab, Enter, Escape, and click interactions, book-link accessible names, search focus, section order, and horizontal overflow.
 
