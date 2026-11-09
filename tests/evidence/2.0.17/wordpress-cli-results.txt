@@ -1,0 +1,2 @@
+homepage-latest-work.php PASS: 102 Latest Work integration checks (WordPress 7.1.3, PHP 8.3.33).
+excerpts.php PASS: 170 excerpt integration checks (WordPress 7.1.3, PHP 8.3.33).

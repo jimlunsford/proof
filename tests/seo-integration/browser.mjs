@@ -30,6 +30,7 @@ try {
 		mount: [
 			{ hostPath: theme, vfsPath: '/wordpress/wp-content/themes/proof' },
 			{ hostPath: here, vfsPath: '/proof-tests' },
+			...(process.env.PROOF_TEST_COVERS_DIR ? [{ hostPath: resolve(process.env.PROOF_TEST_COVERS_DIR), vfsPath: '/proof-covers' }] : []),
 		],
 	});
 	const status = await new Promise((resolveExit, reject) => {

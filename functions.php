@@ -721,7 +721,7 @@ function proof_customize_register( $wp_customize ) {
 		'proof_identity_published_books',
 		array(
 			'title'       => __( 'Homepage: Published Books', 'proof' ),
-			'description' => __( 'Two compact book features. Leave a title, URL, or cover blank to hide a slot. Full descriptions and purchase links belong on the book pages.', 'proof' ),
+			'description' => __( 'Four compact book features, numbered in display order. Leave a title, URL, or cover blank to hide a slot. Full descriptions and purchase links belong on the book pages.', 'proof' ),
 			'priority'    => 32.5,
 		)
 	);

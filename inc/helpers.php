@@ -443,7 +443,7 @@ function proof_get_identity_destination_defaults() {
 		),
 		'book'               => array(
 			'title'       => 'Books',
-			'description' => 'The PERIOD Code and The Disciplined Operator, available in paperback and Kindle.',
+			'description' => 'Books on discipline, ownership, self-trust, and rebuilding your life.',
 			'url'         => home_url( '/books/' ),
 		),
 		'about'              => array(
@@ -486,10 +486,13 @@ function proof_get_identity_destination_links() {
 }
 
 /**
- * Two curated homepage books. Existing book landing pages own the full copy.
+ * Four curated homepage books, in display order. Book pages own the full copy.
  *
  * The attachment IDs are JimLunsford.com defaults, not portable media assets.
  * Customizer values replace these defaults without a template change.
+ * Keys are persistent setting identities, not display positions: keep `one`
+ * for The PERIOD Code and `two` for The Disciplined Operator. New slots
+ * `three` and `four` display between them without migrating saved values.
  */
 function proof_get_identity_published_books_defaults() {
 	return array(
@@ -498,6 +501,18 @@ function proof_get_identity_published_books_defaults() {
 			'description' => 'Six non-negotiable values to take back your life and keep it.',
 			'url'         => home_url( '/period-code/' ),
 			'image_id'    => 2586,
+		),
+		'three' => array(
+			'title'       => 'How to Rebuild Yourself',
+			'description' => 'Raise standards, build structure, create proof, and become someone you can trust.',
+			'url'         => home_url( '/how-to-rebuild-yourself/' ),
+			'image_id'    => 2690,
+		),
+		'four' => array(
+			'title'       => 'The Discipline Loop',
+			'description' => 'Repeated action creates proof, rebuilds self-trust, and stabilizes identity.',
+			'url'         => home_url( '/discipline-loop/' ),
+			'image_id'    => 2698,
 		),
 		'two' => array(
 			'title'       => 'The Disciplined Operator',

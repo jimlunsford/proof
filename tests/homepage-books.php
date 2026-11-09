@@ -14,7 +14,7 @@ function esc_html( $value ) { return htmlspecialchars( $value, ENT_QUOTES, 'UTF-
 function esc_attr( $value ) { return esc_html( $value ); }
 function __( $value, $domain = '' ) { return $value; }
 function esc_html_e( $value, $domain = '' ) { echo esc_html( $value ); }
-function wp_attachment_is_image( $id ) { return in_array( $id, array( 2586, 2615 ), true ); }
+function wp_attachment_is_image( $id ) { return in_array( $id, array( 2586, 2690, 2698, 2615, 9001, 9002, 9003, 9004 ), true ); }
 function wp_get_attachment_image( $id, $size, $icon, $attributes ) { return '<img src="https://jimlunsford.com/test-' . $id . '.jpg" alt="' . esc_attr( $attributes['alt'] ) . '" sizes="' . esc_attr( $attributes['sizes'] ) . '" loading="' . esc_attr( $attributes['loading'] ) . '" />'; }
 require dirname( __DIR__ ) . '/inc/helpers.php';
 $checks = 0;
@@ -39,35 +39,76 @@ unset( $GLOBALS['proof_test_mods']['proof_identity_destination_law_enforcement_u
 $GLOBALS['proof_test_mods']['proof_identity_destination_book_url'] = '';
 check( 5 === count( proof_get_identity_destination_links() ), 'Existing blank book override preserved' );
 unset( $GLOBALS['proof_test_mods']['proof_identity_destination_book_url'] );
+$GLOBALS['proof_test_mods'] = array();
+$expected = array(
+ 'one' => array( 'title' => 'The PERIOD Code', 'description' => 'Six non-negotiable values to take back your life and keep it.', 'url' => home_url( '/period-code/' ), 'image_id' => 2586 ),
+ 'three' => array( 'title' => 'How to Rebuild Yourself', 'description' => 'Raise standards, build structure, create proof, and become someone you can trust.', 'url' => home_url( '/how-to-rebuild-yourself/' ), 'image_id' => 2690 ),
+ 'four' => array( 'title' => 'The Discipline Loop', 'description' => 'Repeated action creates proof, rebuilds self-trust, and stabilizes identity.', 'url' => home_url( '/discipline-loop/' ), 'image_id' => 2698 ),
+ 'two' => array( 'title' => 'The Disciplined Operator', 'description' => 'A manifesto for self-command.', 'url' => 'https://disciplinedoperator.com/', 'image_id' => 2615 ),
+);
+check( $expected === proof_get_identity_published_books_defaults(), 'Exact defaults, order, and persistent setting identities' );
 $books = proof_get_identity_published_books();
-check( 2 === count( $books ), 'Exactly two default books' );
-check( array( 2586, 2615 ) === array_column( $books, 'image_id' ), 'Approved media IDs' );
+check( array_values( $expected ) === $books, 'Exactly four valid default books in approved order' );
 $html = render_books();
-check( 2 === substr_count( $html, '<article ' ), 'Two rendered features' );
-check( false !== strpos( $html, 'View All Books' ), 'Catalog link visible' );
-check( false !== strpos( $html, 'aria-label="Explore Book: The PERIOD Code"' ), 'First book accessible name contains the visible label and title' );
-check( false !== strpos( $html, 'aria-label="Explore Book: The Disciplined Operator"' ), 'Second book accessible name contains the visible label and distinct title' );
-check( 2 === substr_count( $html, '>Explore Book</a>' ), 'Both visible book labels remain unchanged' );
+check( 4 === substr_count( $html, '<article ' ), 'Four rendered features' );
+check( false !== strpos( $html, 'href="https://jimlunsford.com/books/">View All Books</a>' ), 'Catalog link retains its label and destination' );
+check( 4 === substr_count( $html, '>Explore Book</a>' ), 'All four visible book labels remain unchanged' );
 foreach ( $books as $book ) {
-	check( false !== strpos( $html, 'href="' . esc_url( $book['url'] ) . '" aria-label="Explore Book: ' . esc_attr( $book['title'] ) . '"' ), 'Each book retains its configured destination' );
+ check( false !== strpos( $html, 'href="' . esc_url( $book['url'] ) . '" aria-label="Explore Book: ' . esc_attr( $book['title'] ) . '"' ), 'Each accessible link retains its configured destination and title' );
+ check( false !== strpos( $html, 'alt="' . esc_attr( $book['title'] . ' book cover by Jim Lunsford' ) . '"' ), 'Each cover has its distinct accessible description' );
+ check( false !== strpos( $html, esc_html( $book['description'] ) ), 'Each description renders' );
 }
-check( false === strpos( $html, 'amazon.com' ), 'Homepage links to book pages rather than adding checkout buttons' );
+check( ! preg_match( '/amazon\.|amzn\./i', $html ), 'Homepage links to book pages, without Amazon checkout links' );
 check( false === strpos( $html, 'Useless Eaters' ), 'No excluded title' );
-$GLOBALS['proof_test_mods']['proof_identity_published_books_one_title'] = '';
-check( 1 === count( proof_get_identity_published_books() ), 'Blank title hides slot' );
-$GLOBALS['proof_test_mods']['proof_identity_published_books_two_url'] = '';
-check( '' === trim( render_books() ), 'Empty section suppressed' );
-$GLOBALS['proof_test_mods'] = array( 'proof_identity_published_books_one_image_id' => 999 );
-check( 1 === count( proof_get_identity_published_books() ), 'Non-image cover hides slot' );
-$GLOBALS['proof_test_mods'] = array( 'proof_identity_published_books_one_url' => 'javascript:alert(1)' );
-check( 1 === count( proof_get_identity_published_books() ), 'Unsafe link suppressed' );
-$GLOBALS['proof_test_mods'] = array( 'proof_identity_published_books_one_title' => '<script>unsafe</script>', 'proof_identity_published_books_one_description' => '<img onerror=alert(1)>' );
-$html = render_books();
-check( false === strpos( $html, '<script>' ) && false !== strpos( $html, '&lt;script&gt;' ), 'Title escaped' );
-check( false === strpos( $html, '<img onerror=' ), 'Description escaped' );
-check( false !== strpos( $html, '(max-width: 380px) 90px, 112px' ), 'Responsive cover sizes' );
+
+// All fields remain independently configurable. Legacy two is still Operator,
+// even though it now occupies display position four.
+foreach ( array_keys( $expected ) as $index => $key ) {
+ $prefix = 'proof_identity_published_books_' . $key . '_';
+ $custom = array( 'title' => 'Saved ' . $key, 'description' => 'Saved description ' . $key, 'url' => 'https://example.com/' . $key . '/', 'image_id' => 9001 + $index );
+ foreach ( $custom as $field => $value ) {
+  $GLOBALS['proof_test_mods'] = array( $prefix . $field => $value );
+  $changed = array_values( $expected );
+  $changed[$index][$field] = $value;
+  check( $changed === proof_get_identity_published_books(), $key . ': independent saved ' . $field . ', other slots unchanged' );
+ }
+ foreach ( array( array('title',''), array('title','   '), array('url',''), array('url','javascript:alert(1)'), array('url','data:text/html,unsafe'), array('image_id',0), array('image_id',999), array('image_id','not-a-number') ) as $invalid ) {
+  $GLOBALS['proof_test_mods'] = array( $prefix . $invalid[0] => $invalid[1] );
+  $remaining = $expected; unset( $remaining[$key] );
+  check( array_values( $remaining ) === proof_get_identity_published_books(), $key . ': invalid ' . $invalid[0] . ' hides only this slot and closes its gap' );
+  check( 3 === substr_count( render_books(), '<article ' ), $key . ': exactly three remaining cards render' );
+ }
+ $GLOBALS['proof_test_mods'] = array( $prefix . 'description' => '' );
+ check( 4 === count( proof_get_identity_published_books() ), $key . ': optional blank description retains card' );
+ $GLOBALS['proof_test_mods'] = array( $prefix . 'title' => '<script>unsafe</script> "quoted"', $prefix . 'description' => '<img onerror=alert(1)> & text', $prefix . 'url' => 'https://example.com/?q=" onmouseover="unsafe' );
+ $html = render_books();
+ check( false === strpos( $html, '<script>' ) && false !== strpos( $html, '&lt;script&gt;' ), $key . ': title escaped' );
+ check( false === strpos( $html, '<img onerror=' ) && false !== strpos( $html, '&lt;img onerror=alert(1)&gt; &amp; text' ), $key . ': description escaped' );
+ check( false === strpos( $html, '" onmouseover="' ), $key . ': URL attribute escaped' );
+ check( false !== strpos( $html, 'aria-label="Explore Book: &lt;script&gt;unsafe&lt;/script&gt; &quot;quoted&quot;"' ), $key . ': accessible link name escaped' );
+ check( false !== strpos( $html, '(max-width: 380px) 90px, 112px' ), 'Responsive cover sizes retained' );
+}
+$GLOBALS['proof_test_mods'] = array();
+$all_saved = array();
+foreach ( array_keys( $expected ) as $index => $key ) {
+ $saved = array( 'title' => 'Saved ' . $key, 'description' => 'Description ' . $key, 'url' => 'https://example.com/' . $key . '/', 'image_id' => 9001 + $index );
+ foreach ( $saved as $field => $value ) { $GLOBALS['proof_test_mods']['proof_identity_published_books_' . $key . '_' . $field] = $value; }
+ $all_saved[] = $saved;
+}
+check( $all_saved === proof_get_identity_published_books(), 'All four saved entries coexist in display order' );
+foreach ( array_keys( $expected ) as $key ) { $GLOBALS['proof_test_mods']['proof_identity_published_books_' . $key . '_title'] = ''; }
+check( '' === trim( render_books() ), 'All invalid entries suppress the empty section and catalog link' );
+$GLOBALS['proof_test_mods'] = array();
+check( 'Books on discipline, ownership, self-trust, and rebuilding your life.' === $defaults['book']['description'], 'Durable Start Here Books default' );
+$original_links = proof_get_identity_destination_links();
+$GLOBALS['proof_test_mods']['proof_identity_destination_book_description'] = 'My saved catalog description';
+$expected_links = $original_links;
+foreach ( $expected_links as &$link ) { if ( 'Books' === $link['title'] ) { $link['description'] = 'My saved catalog description'; } }
+unset( $link );
+check( $expected_links === proof_get_identity_destination_links(), 'Saved Start Here description retained, all other destinations unchanged' );
 $GLOBALS['proof_test_mods'] = array();
 $identity = file_get_contents( dirname( __DIR__ ) . '/template-parts/home/identity-hub.php' );
+check( strpos( $identity, 'proof-identity-destinations' ) < strpos( $identity, "'template-parts/home/published-books'" ), 'Books remain after Start Here' );
 check( strpos( $identity, "'template-parts/home/published-books'" ) < strpos( $identity, "'template-parts/home/latest-work'" ), 'Book template before Latest Work' );
 $css = file_get_contents( dirname( __DIR__ ) . '/assets/css/homepage-books.css' );
 check( false !== strpos( $css, 'grid-template-columns: 112px minmax(0, 1fr)' ), 'Approved desktop book geometry' );
