@@ -1,5 +1,13 @@
 # Proof version history
 
+## 2.0.17 (candidate)
+
+- Expand Published Books to The PERIOD Code, How to Rebuild Yourself, The Discipline Loop, and The Disciplined Operator, in that order, using the existing card template and responsive styles.
+- Preserve the legacy `one` and `two` Customizer identities. Add independently editable `three` and `four` entries between them in display order; saved titles, descriptions, URLs, and covers retain precedence without migration.
+- Replace the Start Here Books default description with durable catalog wording, preserving its setting identity and saved overrides.
+- Extend focused regression and disposable browser coverage for four entries, compatibility, safe output, covers, links, and responsive layout.
+- Proposed source candidate only. No production deployment or theme installation.
+
 ## 2.0.16
 
 - Honor WordPress password access before reading manual excerpts, post bodies, and the custom article deck/source fields. Ordinary public summaries and valid-password access retain their existing presentation.

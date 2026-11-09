@@ -8,11 +8,22 @@ Proof is designed for [JimLunsford.com](https://jimlunsford.com/). The latest so
 
 The homepage is an identity and discovery page. Start Here links direct readers into the site's major areas. The Published Books section appears after Start Here and before Latest Work. Follow and Connect and optional imagery remain separate parts of the layout.
 
-The book destination in Start Here uses the existing `proof_identity_destination_book_*` theme-mod keys. The two homepage book features are maintained under **Appearance > Customize > Homepage: Published Books**. Their setting prefixes are `proof_identity_published_books_one_` and `proof_identity_published_books_two_`, each with `title`, `description`, `url`, and `image_id` fields.
+The book destination in Start Here uses the existing `proof_identity_destination_book_*` theme-mod keys. Its catalog description is deliberately independent of book count, titles, and available formats. A saved description continues to override the default.
 
-A book feature is hidden if its title, destination URL, or valid cover image is missing. Its link goes to the book's own page rather than directly to a purchase checkout. The full descriptions and purchase links belong on those pages.
+Four homepage book features are maintained under **Appearance > Customize > Homepage: Published Books**. Each has independently editable `title`, `description`, `url`, and `image_id` fields. Customizer labels are numbered by display position. The keys remain persistent identities, not positions:
 
-The source defaults at version 2.0.16 use WordPress media attachment IDs **2586** and **2615**. These are site-specific defaults, not portable assets or required IDs for another installation. Saved Customizer settings take precedence, and updating the theme must not silently rewrite them.
+| Display position | Default book | Setting prefix | Default cover ID |
+| --- | --- | --- | --- |
+| 1 | The PERIOD Code | `proof_identity_published_books_one_` | 2586 |
+| 2 | How to Rebuild Yourself | `proof_identity_published_books_three_` | 2690 |
+| 3 | The Discipline Loop | `proof_identity_published_books_four_` | 2698 |
+| 4 | The Disciplined Operator | `proof_identity_published_books_two_` | 2615 |
+
+Version 2.0.17 inserts new `three` and `four` entries between legacy `one` and `two`. Both the frontend and Customizer follow the ordered defaults. No settings are migrated, renamed, repurposed, or written during an upgrade. Saved values, including intentionally blank fields, retain precedence.
+
+A book feature is hidden if its title, destination URL, or valid cover image is missing. The remaining entries close the gap. Its link goes to the book's own page rather than directly to a purchase checkout. The full descriptions and purchase links belong on those pages. View All Books still points to `/books/`.
+
+The cover IDs are JimLunsford.com defaults, not portable assets or required IDs for another installation. Before a separately authorized installation, verify the four attachments still exist and inspect saved overrides. Reverting to 2.0.16 restores its two-entry rendering; any new `three` and `four` values remain stored and unused until the newer theme is active again. Preserve theme mods and retain the previous theme package for rollback.
 
 ## Automatic Latest Work
 

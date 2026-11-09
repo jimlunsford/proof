@@ -30,7 +30,7 @@ WordPress continues to own publishing, permissions, media, and ordinary content 
 
 - WordPress 6.4 or newer. Theme metadata is tested up to WordPress 7.1.3.
 - PHP 7.4 or newer.
-- Current source version: **2.0.16**.
+- Current source version: **2.0.17** (candidate, not deployed).
 
 Proof's source repository does not contain the live site's database, uploaded media, or WordPress configuration.
 
