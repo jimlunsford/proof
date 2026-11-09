@@ -72,7 +72,7 @@ It covers Law Enforcement's sole-feature, additional-article, and unpublished-fe
 
 The test also uses the exact original failing 2.0.14 source commit as a historical negative control. Keep the relevant Git history available. An expected negative-control failure is not a failure of the current source version.
 
-The browser runner uses Chromium on disposable content at widths 1365, 768, 390, and 360 pixels. It exercises real Tab, Enter, Escape, and click interactions, book-link accessible names, search focus, section order, and horizontal overflow.
+The browser runner uses Chromium on disposable content at widths 1365, 768, 430, 390, and 360 pixels. It exercises real Tab, Enter, Escape, and click interactions, all four book-link accessible names and destinations, loaded covers, consistent card geometry, search focus, section order, and horizontal overflow. The fixture verifies actual Customizer registration with stable setting identities and display-position labels.
 
 ### Optional test inputs and outputs
 
@@ -80,6 +80,8 @@ The browser runner uses Chromium on disposable content at widths 1365, 768, 390,
 - `PROOF_TEST_PLUGIN_CACHE`: Directory with the pinned plugin ZIPs.
 - `PROOF_TEST_RESULTS`: Directory for saved HTTP test evidence.
 - `PROOF_BROWSER_OUTPUT`: Directory for browser results and screenshots.
+- `PROOF_TEST_COVERS_DIR`: Optional directory containing verified copies of the four public covers, named `2586.jpg`, `2690.jpg`, `2698.png`, and `2615.webp`. The browser runner reads them as inputs to its disposable attachment fixture. Without this directory, four synthetic covers are generated. Record source URLs and SHA-256 values when using real artwork.
+- `PROOF_BROWSER_EXECUTABLE`: Optional installed Chromium/Chrome executable for the browser runner. The reported browser version identifies the actual test runtime.
 
 Only use local, disposable test data in these outputs.
 
@@ -88,3 +90,5 @@ Only use local, disposable test data in these outputs.
 These checks are useful regression evidence, not a complete production certification. The Playground integration is SQLite-based, so it does not establish native MariaDB/MySQL or the site's production cache/PHP-FPM behavior. The Chromium checks do not replace full screen-reader or WCAG acceptance.
 
 The accepted 2.0.16 test evidence is preserved in [the version-specific verification record](evidence/2.0.16.md). Historical findings and logs belong with that evidence or the [changelog](../CHANGELOG.md), rather than in the public project introduction.
+
+The [2.0.17 candidate verification record](evidence/2.0.17.md) documents the four-book transition, current test results, screenshots, and deployment boundaries.

@@ -1,0 +1,23 @@
+{
+  "php": "8.3.6",
+  "checks": [
+    {
+      "command": "php tests/homepage-books.php",
+      "exit_code": 0,
+      "stdout": "PASS: 141 homepage book regression checks.\n",
+      "stderr": ""
+    },
+    {
+      "command": "php tests/law-enforcement-category.php",
+      "exit_code": 0,
+      "stdout": "PASS: 28 Law Enforcement category regression checks.\n",
+      "stderr": ""
+    },
+    {
+      "command": "php tests/projects-pagination-seo.php",
+      "exit_code": 0,
+      "stdout": "PASS: first listing page\nPASS: 25 posts => 5 pages\nPASS: page one URL\nPASS: deep URL\nPASS: unchanged page one SEO\nPASS: page three URL\nPASS: canonical self URL\nPASS: Open Graph self URL\nPASS: unrelated metadata preserved\nPASS: schema WebPage id\nPASS: schema WebPage URL\nPASS: schema ReadAction target\nPASS: schema WebSite untouched\nPASS: related graph with args untouched\nPASS: other category metadata untouched\nPASS: other category schema untouched\nPASS: legacy category page 1 mapping\nPASS: legacy category page 2 mapping\nPASS: legacy category page 3 mapping\nPASS: legacy category page 4 mapping\nPASS: no SEO canonical for invalid page\nPASS: invalid Projects page marked 404\nPASS: invalid Projects HTTP 404 status\nPASS: no invalid-page guess redirect\nRESULT: PROJECTS_PAGINATION_OFFLINE_PASS\n",
+      "stderr": ""
+    }
+  ]
+}
