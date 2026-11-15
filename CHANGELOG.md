@@ -1,13 +1,21 @@
 # Proof version history
 
-## 2.0.18 (release candidate)
+## 2.0.19 (release candidate)
+
+- Wrap overlong links inside single-post article content without clipping text or changing scrolling in code and preformatted blocks.
+- Keep the full Projects portfolio, introduction, and destination links on page one; use numbered headings, an overview link, and the existing Project Notes listing on valid continuation pages.
+- Give valid paginated Projects pages distinct browser titles through The SEO Framework's title filter while preserving canonical, Open Graph, WebPage schema, ReadAction, legacy redirects and true out-of-range 404 responses.
+- Extend focused browser and disposable WordPress/SEO regressions for narrow articles and pagination boundaries, including the current 28-post Projects listing.
+- Review candidate only. Production deployment remains separately guarded; deferred navigation optimization is excluded.
+
+## 2.0.18
 
 - Correct Fluent Forms submit button text and hover/focus contrast on Contact, using Proof's established colors.
 - Improve Fluent Forms and Noptin email input boundary contrast and visible keyboard focus without changing form markup, validation or submissions.
 - Add a targeted 1366/390/320 px browser regression using the actual published form markup and plugin assets, with simulated form responses.
 - Production Turnstile, mail delivery, Noptin persistence and optimized guest CSS remain separate deployment acceptance checks.
 - The Work 06 book-cover optimization is a separate WordPress media/content operation, not a Proof theme code change.
-- Release candidate only. Production deployment and merge not yet completed.
+- Merged as PR #13 and deployed to JimLunsford.com on November 15, 2026; contact contrast checks passed on live guest pages.
 
 ## 2.0.17
 
