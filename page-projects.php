@@ -13,57 +13,67 @@ get_header();
 	<?php
 	while ( have_posts() ) :
 		the_post();
+		$proof_projects_page = proof_get_projects_writing_current_page();
 		?>
 		<article id="page-<?php the_ID(); ?>" <?php post_class( 'proof-projects-page' ); ?>>
-			<header class="proof-projects-header proof-archive-header proof-block">
-				<h1 class="proof-page-title"><?php the_title(); ?></h1>
+			<?php if ( $proof_projects_page > 1 ) : ?>
+				<header class="proof-projects-header proof-archive-header proof-block">
+					<h1 class="proof-page-title"><?php
+						/* translators: 1: Projects page title, 2: listing page number. */
+						printf( esc_html__( '%1$s, Page %2$d', 'proof' ), esc_html( get_the_title() ), (int) $proof_projects_page );
+					?></h1>
+					<p class="proof-link-row"><a href="<?php echo esc_url( get_permalink() ); ?>"><?php esc_html_e( 'Projects overview', 'proof' ); ?></a></p>
+				</header>
+			<?php else : ?>
+				<header class="proof-projects-header proof-archive-header proof-block">
+					<h1 class="proof-page-title"><?php the_title(); ?></h1>
 
-				<?php if ( proof_get_projects_description() ) : ?>
-					<p class="proof-archive-description"><?php echo esc_html( proof_get_projects_description() ); ?></p>
-				<?php endif; ?>
+					<?php if ( proof_get_projects_description() ) : ?>
+						<p class="proof-archive-description"><?php echo esc_html( proof_get_projects_description() ); ?></p>
+					<?php endif; ?>
 
-				<p class="proof-link-row">
-					<a href="<?php echo esc_url( proof_get_projects_start_here_url() ); ?>"><?php esc_html_e( 'Start here', 'proof' ); ?></a>
-					<a href="<?php echo esc_url( proof_get_subscribe_url() ); ?>"><?php esc_html_e( 'Subscribe', 'proof' ); ?></a>
-				</p>
-			</header>
+					<p class="proof-link-row">
+						<a href="<?php echo esc_url( proof_get_projects_start_here_url() ); ?>"><?php esc_html_e( 'Start here', 'proof' ); ?></a>
+						<a href="<?php echo esc_url( proof_get_subscribe_url() ); ?>"><?php esc_html_e( 'Subscribe', 'proof' ); ?></a>
+					</p>
+				</header>
 
-			<section class="proof-project-cards proof-block" aria-labelledby="proof-project-cards-heading">
-				<div class="proof-section-heading">
-					<h2 id="proof-project-cards-heading"><?php esc_html_e( 'What I Am Building', 'proof' ); ?></h2>
-				</div>
+				<section class="proof-project-cards proof-block" aria-labelledby="proof-project-cards-heading">
+					<div class="proof-section-heading">
+						<h2 id="proof-project-cards-heading"><?php esc_html_e( 'What I Am Building', 'proof' ); ?></h2>
+					</div>
 
-				<div class="proof-project-grid">
-					<?php foreach ( proof_get_project_cards() as $card ) : ?>
-						<?php if ( empty( $card['enabled'] ) || ( empty( $card['title'] ) && empty( $card['description'] ) ) ) : ?>
-							<?php continue; ?>
-						<?php endif; ?>
-
-						<article class="proof-project-card">
-							<?php if ( ! empty( $card['title'] ) ) : ?>
-								<h3>
-									<?php if ( ! empty( $card['url'] ) ) : ?>
-										<a href="<?php echo esc_url( $card['url'] ); ?>"><?php echo esc_html( $card['title'] ); ?></a>
-									<?php else : ?>
-										<?php echo esc_html( $card['title'] ); ?>
-									<?php endif; ?>
-								</h3>
+					<div class="proof-project-grid">
+						<?php foreach ( proof_get_project_cards() as $card ) : ?>
+							<?php if ( empty( $card['enabled'] ) || ( empty( $card['title'] ) && empty( $card['description'] ) ) ) : ?>
+								<?php continue; ?>
 							<?php endif; ?>
 
-							<?php if ( ! empty( $card['description'] ) ) : ?>
-								<div class="proof-project-card-description">
-									<?php echo wp_kses_post( wpautop( $card['description'] ) ); ?>
-								</div>
-							<?php endif; ?>
+							<article class="proof-project-card">
+								<?php if ( ! empty( $card['title'] ) ) : ?>
+									<h3>
+										<?php if ( ! empty( $card['url'] ) ) : ?>
+											<a href="<?php echo esc_url( $card['url'] ); ?>"><?php echo esc_html( $card['title'] ); ?></a>
+										<?php else : ?>
+											<?php echo esc_html( $card['title'] ); ?>
+										<?php endif; ?>
+									</h3>
+								<?php endif; ?>
 
-							<?php if ( ! empty( $card['url'] ) && ! empty( $card['link_label'] ) ) : ?>
-								<p class="proof-project-card-link"><a href="<?php echo esc_url( $card['url'] ); ?>"><?php echo esc_html( $card['link_label'] ); ?></a></p>
-							<?php endif; ?>
-						</article>
-					<?php endforeach; ?>
-				</div>
-			</section>
+								<?php if ( ! empty( $card['description'] ) ) : ?>
+									<div class="proof-project-card-description">
+										<?php echo wp_kses_post( wpautop( $card['description'] ) ); ?>
+									</div>
+								<?php endif; ?>
 
+								<?php if ( ! empty( $card['url'] ) && ! empty( $card['link_label'] ) ) : ?>
+									<p class="proof-project-card-link"><a href="<?php echo esc_url( $card['url'] ); ?>"><?php echo esc_html( $card['link_label'] ); ?></a></p>
+								<?php endif; ?>
+							</article>
+						<?php endforeach; ?>
+					</div>
+				</section>
+			<?php endif; ?>
 
 			<section class="proof-project-writing proof-block" aria-labelledby="proof-project-writing-heading">
 				<div class="proof-section-heading">
@@ -79,7 +89,7 @@ get_header();
 				$proof_project_writing_pagination = paginate_links(
 					array(
 						'total'   => max( 1, (int) $proof_project_writing_query->max_num_pages ),
-						'current' => proof_get_projects_writing_current_page(),
+						'current' => $proof_projects_page,
 					)
 				);
 

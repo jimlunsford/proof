@@ -567,6 +567,10 @@ input[type="submit"] {
 	max-width: var(--proof-reading);
 }
 
+.proof-single-layout .proof-entry-content a:not(pre a, code a) {
+	overflow-wrap: anywhere;
+}
+
 .proof-entry-content > *:first-child {
 	margin-top: 0;
 }

@@ -26,6 +26,10 @@ for($i=0;$i<14;$i++) {
 }
 wp_insert_post(['post_title'=>'Why I Loved the Work','post_name'=>'why-i-loved-the-work','post_status'=>'publish','post_category'=>[$law['term_id']],'post_content'=>'<p>A synthetic law story used only in disposable acceptance.</p>']);
 $article='<!-- wp:paragraph --><p>'.str_repeat('A useful article paragraph about building reliable publishing tools. ',12).'</p><!-- /wp:paragraph --><!-- wp:heading --><h2 class="wp-block-heading">Code and narrow screens</h2><!-- /wp:heading --><!-- wp:code --><pre class="wp-block-code"><code>'.str_repeat('A-long-code-line-with-breaks-available-',12).'</code></pre><!-- /wp:code --><!-- wp:paragraph --><p>'.str_repeat('The next practical lesson remains readable across desktop and mobile layouts. ',15).'</p><!-- /wp:paragraph -->';
+// A displayed URL in prose and a separately scrollable, preformatted example.
+$long_url = 'https://mcp.desktopcommander.app/mcp';
+$article .= '<!-- wp:paragraph --><p>Remote endpoint: <a href="' . $long_url . '">' . $long_url . '</a>.</p><!-- /wp:paragraph -->';
+$article .= '<!-- wp:html --><pre class="fixture-scroll" style="overflow:auto"><a href="#example">' . str_repeat( 'command_argument_', 12 ) . '</a></pre><!-- /wp:html -->';
 $browser_article=wp_insert_post(['post_title'=>'Browser Acceptance Article','post_name'=>'browser-article','post_status'=>'publish','post_category'=>[$projects['term_id']],'post_content'=>$article]);
 $book_paths = ['one'=>'period-code', 'three'=>'how-to-rebuild-yourself', 'four'=>'discipline-loop', 'two'=>'disciplined-operator'];
 foreach (proof_get_identity_published_books_defaults() as $key=>$book) {
