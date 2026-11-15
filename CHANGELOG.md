@@ -1,12 +1,21 @@
 # Proof version history
 
-## 2.0.17 (candidate)
+## 2.0.18 (release candidate)
+
+- Correct Fluent Forms submit button text and hover/focus contrast on Contact, using Proof's established colors.
+- Improve Fluent Forms and Noptin email input boundary contrast and visible keyboard focus without changing form markup, validation or submissions.
+- Add a targeted 1366/390/320 px browser regression using the actual published form markup and plugin assets, with simulated form responses.
+- Production Turnstile, mail delivery, Noptin persistence and optimized guest CSS remain separate deployment acceptance checks.
+- The Work 06 book-cover optimization is a separate WordPress media/content operation, not a Proof theme code change.
+- Release candidate only. Production deployment and merge not yet completed.
+
+## 2.0.17
 
 - Expand Published Books to The PERIOD Code, How to Rebuild Yourself, The Discipline Loop, and The Disciplined Operator, in that order, using the existing card template and responsive styles.
 - Preserve the legacy `one` and `two` Customizer identities. Add independently editable `three` and `four` entries between them in display order; saved titles, descriptions, URLs, and covers retain precedence without migration.
 - Replace the Start Here Books default description with durable catalog wording, preserving its setting identity and saved overrides.
 - Extend focused regression and disposable browser coverage for four entries, compatibility, safe output, covers, links, and responsive layout.
-- Proposed source candidate only. No production deployment or theme installation.
+- Merged through PR #12. The production site reports Proof 2.0.17 as of November 15, 2026.
 
 ## 2.0.16
 
