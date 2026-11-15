@@ -46,6 +46,10 @@ function proof_seo_fixture_seed() {
 	if ( is_wp_error( $fixture['page'] ) ) {
 		throw new RuntimeException( $fixture['page']->get_error_message() );
 	}
+	update_post_meta( $fixture['page'], '_genesis_title', 'Projects: Tools, Software, and Systems' );
+	set_theme_mod( 'proof_project_bonumark_enabled', true );
+	set_theme_mod( 'proof_project_capsarium_enabled', true );
+	set_theme_mod( 'proof_projects_writing_heading', 'Project Notes' );
 	for ( $i = 0; $i < 25; $i++ ) {
 		$fixture['projects'][] = proof_seo_fixture_post( 'Project fixture ' . $i, 'project-fixture-' . $i, $fixture['terms']['projects'], $i + 1 );
 	}
@@ -94,5 +98,21 @@ function proof_seo_fixture_unpublish_feature() {
 	if ( is_wp_error( $result ) || 'draft' !== get_post_status( $fixture['feature'] ) ) {
 		throw new RuntimeException( 'Could not unpublish the disposable feature.' );
 	}
+	return $fixture;
+}
+
+/** Resize only the known, ordered set of synthetic Projects posts. */
+function proof_seo_fixture_resize_projects( $count ) {
+	$fixture = get_option( 'proof_seo_fixture' );
+	while ( count( $fixture['projects'] ) < $count ) {
+		$i = count( $fixture['projects'] );
+		$fixture['projects'][] = proof_seo_fixture_post( 'Project fixture ' . $i, 'project-fixture-' . $i, $fixture['terms']['projects'], $i + 1 );
+	}
+	while ( count( $fixture['projects'] ) > $count ) {
+		if ( ! wp_delete_post( array_pop( $fixture['projects'] ), true ) ) {
+			throw new RuntimeException( 'Could not remove a disposable project post.' );
+		}
+	}
+	update_option( 'proof_seo_fixture', $fixture );
 	return $fixture;
 }

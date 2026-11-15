@@ -66,6 +66,21 @@ function proof_projects_listing_paged_seo_url() {
 }
 
 /**
+ * Number the browser tab for this secondary query. TSF still supplies the
+ * complete editorial title and branding, and escapes the filtered result.
+ */
+function proof_projects_paged_document_title( $title ) {
+	$page = proof_projects_listing_page_number();
+	if ( $page <= 1 || $page > proof_projects_listing_page_count() ) {
+		return $title;
+	}
+
+	/* translators: 1: listing page number, 2: SEO document title. */
+	return sprintf( __( 'Page %1$d: %2$s', 'proof' ), $page, $title );
+}
+add_filter( 'the_seo_framework_pre_get_document_title', 'proof_projects_paged_document_title' );
+
+/**
  * Keep the existing The SEO Framework canonical and Open Graph generators.
  * Change only their rendered URL values for valid Projects pagination.
  */

@@ -173,6 +173,24 @@ try {
 		check(errors.length === 0, `${width}: no browser JavaScript exceptions`);
 		await context.close();
 	}
+	const narrow = await browser.newPage({ viewport: { width: 320, height: 720 } });
+	const response = await narrow.goto(new URL('/browser-article/', base).href);
+	assert.equal(response.status(), 200);
+	assert.equal(response.headers()['x-proof-disposable-test-site'], '1');
+	const url = 'https://mcp.desktopcommander.app/mcp';
+	const link = narrow.getByRole('link', { name: url, exact: true });
+	check(await link.getAttribute('href') === url, '320: long article URL retains its destination');
+	check(await link.evaluate(el => {
+		const bounds = el.parentElement.getBoundingClientRect();
+		return [...el.getClientRects()].every(r => r.left >= bounds.left - 1 && r.right <= bounds.right + 1);
+	}), '320: every link fragment stays inside its paragraph');
+	check(await narrow.locator('html').evaluate(el => el.scrollWidth === el.clientWidth), '320: article fits viewport');
+	check(await narrow.locator('pre.fixture-scroll').evaluate(pre => {
+		pre.scrollLeft = 50;
+		return pre.scrollWidth > pre.clientWidth && pre.scrollLeft > 0
+			&& pre.querySelector('a').getClientRects().length === 1;
+	}), '320: preformatted example remains one horizontally scrollable line');
+	await narrow.close();
 	results.result = 'PASS';
 	console.log(`PASS: ${results.checks.length} real browser checks (${results.browser}).`);
 } finally {

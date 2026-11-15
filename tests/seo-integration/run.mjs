@@ -46,6 +46,7 @@ function parse(html) {
     .filter(([, attributes]) => attrs(attributes).type === 'application/ld+json')
     .flatMap(([, , json]) => { const parsed = JSON.parse(json); return parsed['@graph'] ?? [parsed]; });
   return {
+    titles: [...html.matchAll(/<title>([^<]*)<\/title>/gi)].map(match => match[1]),
     canonical: links.filter(tag => tag.rel === 'canonical').map(tag => tag.href),
     og: metas.filter(tag => tag.property === 'og:url').map(tag => tag.content),
     robots: metas.filter(tag => tag.name === 'robots').flatMap(tag => tag.content.toLowerCase().split(/\s*,\s*/)).sort(),
@@ -94,8 +95,8 @@ function missing(result, requireNoindex = false) {
   const pages = result.graph.filter(entity => [].concat(entity['@type'] ?? []).some(type => ['WebPage', 'CollectionPage'].includes(type)));
   check(pages.length > 0 && pages.every(entity => !entity['@id'] && !entity.url), `${result.path}: no nonexistent schema page identity`);
 }
-async function fixture(server, action) {
-  const response = await server.playground.run({ code: `<?php define('PROOF_SEO_FIXTURE_RUNNER', true); require '/wordpress/wp-load.php'; require '/proof-tests/fixtures.php'; echo json_encode(${action}());` });
+async function fixture(server, action, args = []) {
+  const response = await server.playground.run({ code: `<?php define('PROOF_SEO_FIXTURE_RUNNER', true); require '/wordpress/wp-load.php'; require '/proof-tests/fixtures.php'; echo json_encode(${action}(${args.join(',')}));` });
   check(response.exitCode === 0, `${action}: PHP completed successfully`);
   return JSON.parse(response.text);
 }
@@ -195,6 +196,48 @@ try {
       valid(await request(server, destination, `${label}-destination`), data.projects.slice(offset, offset + 6), 'WebPage');
     }
     missing(await request(server, '/category/projects/page/4/', 'alias-missing'), true);
+
+    // Keep the historical 25-post coverage above and exercise the current count
+    // plus the thresholds at which pagination appears or disappears.
+    for (const count of [28, 12, 6, 5]) {
+      const { projects } = await fixture(server, 'proof_seo_fixture_resize_projects', [count]);
+      same(projects.length, count, 'Fixture publication count');
+      const last = Math.ceil(count / 6);
+      let overviewTitle;
+      for (let page = 1; page <= last; page++) {
+        const route = page === 1 ? '/projects/' : `/projects/page/${page}/`;
+        const label = `projects-${count}-page-${page}`;
+        const result = await request(server, route, label);
+        valid(result, projects.slice((page - 1) * 6, page * 6), 'WebPage');
+        const html = readFileSync(join(evidence, `${label}.html`), 'utf8');
+        const heading = page === 1 ? 'Projects' : `Projects, Page ${page}`;
+        check(html.includes(`<h1 class="proof-page-title">${heading}</h1>`), `${label}: heading`);
+        check(html.includes('>Project Notes</h2>'), `${label}: retained listing`);
+        same((html.match(/class="proof-project-card"/g) || []).length, page === 1 ? 4 : 0, `${label}: curated cards`);
+        same(html.includes('id="proof-project-cards-heading"'), page === 1, `${label}: curated section`);
+        same(html.includes('class="proof-archive-description"'), page === 1, `${label}: introduction`);
+        const overview = new URL('/projects/', result.url).href;
+        same(html.includes(`href="${overview}">Projects overview</a>`), page > 1, `${label}: return link`);
+        same(result.titles.length, 1, `${label}: exactly one browser title`);
+        if (page === 1) {
+          overviewTitle = result.titles[0];
+          check(overviewTitle.includes('Projects: Tools, Software, and Systems'), 'TSF editorial title retained');
+        } else {
+          same(result.titles[0], `Page ${page}: ${overviewTitle}`, `${label}: numbered editorial title and branding`);
+        }
+        const nav = html.match(/<nav class="proof-pagination"[^>]*>([\s\S]*?)<\/nav>/)?.[1] || '';
+        same(Boolean(nav), last > 1, `${label}: pagination visibility`);
+        if (nav) {
+          check(nav.includes(`aria-current="page" class="page-numbers current">${page}</span>`), `${label}: current page`);
+          const links = [...nav.matchAll(/<a\b[^>]*>/g)].map(([tag]) => attrs(tag));
+          for (const [kind, target] of [['prev', page - 1], ['next', page + 1]]) {
+            const expected = target < 1 || target > last ? [] : [target === 1 ? overview : `${overview}page/${target}/`];
+            same(links.filter(link => link.class.split(' ').includes(kind)).map(link => link.href), expected, `${label}: ${kind} link`);
+          }
+        }
+      }
+      missing(await request(server, `/projects/page/${last + 1}/`, `projects-${count}-missing`));
+    }
 
     data = await fixture(server, 'proof_seo_fixture_add_law_stories');
     valid(await request(server, law, 'law-many'), [data.feature, ...data.law_recent.slice(0, 12)]);
