@@ -71,6 +71,32 @@ input[type="submit"] {
 	outline-offset: 3px;
 }
 
+/* Contact (page 9): keep plugin sizing, feedback and submission behavior. */
+.page-id-9 .ff-default {
+	--fluentform-border-color: var(--proof-muted);
+	--fluentform-danger: #b42318;
+}
+
+/* Outrank the later per-form Fluent Forms style without forcing inline overrides. */
+.page-id-9 .fluentform .ff-btn-submit:not(.ff_btn_no_style) {
+	background-color: var(--proof-text);
+	color: var(--proof-surface);
+}
+
+.page-id-9 .fluentform .ff-btn-submit:not(.ff_btn_no_style):enabled:not(.disabled):is(:hover, :focus) {
+	background-color: var(--proof-link);
+	opacity: 1;
+}
+
+.page-id-9 .noptin-optin-form .noptin-form-field__email:not(.noptin-field--is-invalid):enabled {
+	border-color: var(--proof-muted);
+}
+
+.page-id-9 :is(.ff-el-form-control, .ff-btn-submit, .noptin-form-field__email):focus-visible {
+	outline: 2px solid var(--proof-link);
+	outline-offset: 3px;
+}
+
 .proof-container {
 	width: min(calc(100% - 2.5rem), var(--proof-max));
 	margin: 0 auto;
