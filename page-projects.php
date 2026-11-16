@@ -18,11 +18,7 @@ get_header();
 		<article id="page-<?php the_ID(); ?>" <?php post_class( 'proof-projects-page' ); ?>>
 			<?php if ( $proof_projects_page > 1 ) : ?>
 				<header class="proof-projects-header proof-archive-header proof-block">
-					<h1 class="proof-page-title"><?php
-						/* translators: 1: Projects page title, 2: listing page number. */
-						printf( esc_html__( '%1$s, Page %2$d', 'proof' ), esc_html( get_the_title() ), (int) $proof_projects_page );
-					?></h1>
-					<p class="proof-link-row"><a href="<?php echo esc_url( get_permalink() ); ?>"><?php esc_html_e( 'Projects overview', 'proof' ); ?></a></p>
+					<h1 class="proof-page-title"><?php the_title(); ?></h1>
 				</header>
 			<?php else : ?>
 				<header class="proof-projects-header proof-archive-header proof-block">
