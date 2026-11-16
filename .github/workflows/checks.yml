@@ -44,8 +44,8 @@ jobs:
         stack: ['current', 'legacy']
     env:
       PROOF_TEST_STACK: ${{ matrix.stack }}
-      PROOF_TEST_RESULTS: ${{ runner.temp }}/proof-http-${{ matrix.stack }}
-      PROOF_BROWSER_OUTPUT: ${{ runner.temp }}/proof-browser-${{ matrix.stack }}
+      PROOF_TEST_RESULTS: ${{ github.workspace }}/proof-ci-evidence/http-${{ matrix.stack }}
+      PROOF_BROWSER_OUTPUT: ${{ github.workspace }}/proof-ci-evidence/browser-${{ matrix.stack }}
     steps:
       - uses: actions/checkout@v4
         with:
