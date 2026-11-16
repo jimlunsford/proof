@@ -33,3 +33,46 @@ jobs:
           php tests/homepage-books.php
           php tests/law-enforcement-category.php
           php tests/projects-pagination-seo.php
+
+  integration:
+    name: WordPress/SEO HTTP (${{ matrix.stack }})
+    runs-on: ubuntu-22.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        stack: ['current', 'legacy']
+    env:
+      PROOF_TEST_STACK: ${{ matrix.stack }}
+      PROOF_TEST_RESULTS: ${{ runner.temp }}/proof-http-${{ matrix.stack }}
+      PROOF_BROWSER_OUTPUT: ${{ runner.temp }}/proof-browser-${{ matrix.stack }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The HTTP suite archives an exact historical failing commit as a negative control.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: tests/seo-integration/package-lock.json
+      - name: Install integration dependencies
+        run: npm ci --prefix tests/seo-integration
+      - name: Real WordPress / SEO Framework HTTP regression
+        run: npm --prefix tests/seo-integration test
+      - name: Install disposable Chromium test browser
+        if: matrix.stack == 'current'
+        run: npm exec --prefix tests/seo-integration -- playwright install --with-deps chromium
+      - name: Disposable browser acceptance
+        if: matrix.stack == 'current'
+        run: npm --prefix tests/seo-integration run browser
+      - name: Save disposable test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: proof-${{ matrix.stack }}-integration
+          path: |
+            ${{ env.PROOF_TEST_RESULTS }}
+            ${{ env.PROOF_BROWSER_OUTPUT }}
+          if-no-files-found: warn
+          retention-days: 7

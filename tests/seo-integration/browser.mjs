@@ -9,12 +9,16 @@ import { runCLI } from '@wp-playground/cli';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const theme = resolve(here, '../..');
+const stackName = process.env.PROOF_TEST_STACK || 'current';
+const wordpressVersions = { current: '7.1.4', legacy: '7.1.3' };
+assert.ok(Object.hasOwn(wordpressVersions, stackName), 'PROOF_TEST_STACK must be current or legacy');
+const wpVersion = wordpressVersions[stackName];
 const temp = mkdtempSync(join(tmpdir(), 'proof-browser-'));
 const output = process.env.PROOF_BROWSER_OUTPUT ? resolve(process.env.PROOF_BROWSER_OUTPUT) : join(temp, 'results');
 mkdirSync(output, { recursive: true });
 const blueprint = {
 	steps: [
-		{ step: 'defineWpConfigConsts', consts: { WP_ENVIRONMENT_TYPE: 'local', PROOF_DISPOSABLE_TEST_SITE: true, DISABLE_WP_CRON: true } },
+		{ step: 'defineWpConfigConsts', consts: { WP_ENVIRONMENT_TYPE: 'local', PROOF_DISPOSABLE_TEST_SITE: true, PROOF_TEST_STACK: stackName, DISABLE_WP_CRON: true } },
 		{ step: 'runPHP', code: `<?php
 require '/wordpress/wp-load.php';
 if ('local' !== wp_get_environment_type() || !defined('PROOF_DISPOSABLE_TEST_SITE') || true !== PROOF_DISPOSABLE_TEST_SITE) { throw new RuntimeException('Disposable local site required'); }
@@ -26,7 +30,7 @@ require '/proof-tests/browser-fixture.php';` },
 let server;
 try {
 	server = await runCLI({
-		command: 'server', wp: '7.1.3', php: '8.3', port: 9482, blueprint,
+		command: 'server', wp: wpVersion, php: '8.3', port: 9482, blueprint,
 		mount: [
 			{ hostPath: theme, vfsPath: '/wordpress/wp-content/themes/proof' },
 			{ hostPath: here, vfsPath: '/proof-tests' },
@@ -48,7 +52,7 @@ try {
 		child.on('exit', resolveExit);
 	});
 	assert.equal(status, 0, 'Browser acceptance child must succeed.');
-	console.log(`Browser evidence: ${output}`);
+	console.log(`Browser evidence (${stackName}, WordPress ${wpVersion}): ${output}`);
 } finally {
 	if (server) await server[Symbol.asyncDispose]();
 	// Explicit output directories persist; otherwise preserve evidence in temp.

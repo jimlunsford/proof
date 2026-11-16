@@ -28,7 +28,7 @@ php tests/law-enforcement-category.php
 php tests/projects-pagination-seo.php
 ```
 
-The `Theme checks` GitHub Actions workflow runs PHP lint, JavaScript syntax checks, and the three offline suites on PHP 7.4 and 8.3. It does **not** run WordPress integration or browser acceptance.
+The `Theme checks` GitHub Actions workflow runs PHP lint, JavaScript syntax checks, and the three offline suites on PHP 7.4 and 8.3. It also runs isolated WordPress/SEO HTTP integration against both pinned stacks below and Chromium browser acceptance against the production-matching stack. Each integration run uses a disposable local WordPress database, never the live site. Integration failures fail the workflow; captured test evidence is retained briefly as a GitHub Actions artifact.
 
 ## WordPress CLI integration tests
 
@@ -59,25 +59,34 @@ Requirements: Node.js 24.18 or newer, npm 11.16 or newer, Git, and tar. The test
 ```sh
 cd tests/seo-integration
 npm ci
-npm test
-npx playwright install chromium
-npm run browser
+npm test                              # current production-matching stack
+PROOF_TEST_STACK=legacy npm test      # historical regression stack
+npm exec -- playwright install chromium
+npm run browser                       # current production-matching WordPress
 ```
 
 The runners create local WordPress Playground instances and dispose of them afterward. They do not use an existing site, database, or production credentials.
 
-The HTTP runner exercises WordPress 7.1.3 with PHP 8.3, SQLite, The SEO Framework 5.2.0, and Redirection 5.10.1. WordPress and plugin packages are checked against pinned SHA-256 values. The runner uses the supported `cgi-fcgi` SAPI so Redirection handles actual HTTP redirects.
+The HTTP runner uses PHP 8.3, SQLite, and Redirection 5.10.1, with two checksum-pinned WordPress/SEO stacks:
+
+| Stack | WordPress | The SEO Framework | Purpose |
+| --- | --- | --- | --- |
+| `current` (default) | 7.1.4 | 5.2.1 | Match the versions verified on JimLunsford.com on November 16, 2026 |
+| `legacy` | 7.1.3 | 5.2.0 | Preserve reproducibility of the earlier accepted regression evidence |
+
+Set `PROOF_TEST_STACK=legacy` for either the HTTP or browser runner to use the older stack. Invalid values fail before fixture writes. The HTTP runner uses the supported `cgi-fcgi` SAPI so Redirection handles actual HTTP redirects. Pinned download SHA-256 values are checked before WordPress is initialized. This is version parity testing, not a connection to the production database, theme, or files.
 
 It covers Law Enforcement's sole-feature, additional-article, and unpublished-feature states; valid and invalid Projects pages; legacy category aliases; an unrelated archive; real canonical/indexability output; schema references; and exact article membership.
 
 The test also uses the exact original failing 2.0.14 source commit as a historical negative control. Keep the relevant Git history available. An expected negative-control failure is not a failure of the current source version.
 
-The browser runner uses Chromium on disposable content at widths 1365, 768, 430, 390, and 360 pixels. It exercises real Tab, Enter, Escape, and click interactions, all four book-link accessible names and destinations, loaded covers, consistent card geometry, search focus, section order, and horizontal overflow. The fixture verifies actual Customizer registration with stable setting identities and display-position labels.
+The browser runner uses Chromium on disposable content at widths 1365, 768, 430, 390, and 360 pixels (plus the dedicated 320-pixel long-link regression). It exercises real Tab, Enter, Escape, and click interactions, all four book-link accessible names and destinations, loaded covers, consistent card geometry, search focus, section order, and horizontal overflow. The fixture verifies actual Customizer registration with stable setting identities and display-position labels.
 
 ### Optional test inputs and outputs
 
-- `PROOF_TEST_WORDPRESS_ZIP`: Supply the exact expected WordPress ZIP instead of downloading it.
-- `PROOF_TEST_PLUGIN_CACHE`: Directory with the pinned plugin ZIPs.
+- `PROOF_TEST_STACK`: Select `current` (default) or `legacy`, which selects a checksum-pinned WordPress and SEO Framework combination.
+- `PROOF_TEST_WORDPRESS_ZIP`: Supply the exact ZIP required by the selected test stack instead of downloading it.
+- `PROOF_TEST_PLUGIN_CACHE`: Directory with the selected stack's pinned plugin ZIPs.
 - `PROOF_TEST_RESULTS`: Directory for saved HTTP test evidence.
 - `PROOF_BROWSER_OUTPUT`: Directory for browser results and screenshots.
 - `PROOF_TEST_COVERS_DIR`: Optional directory containing verified copies of the four public covers, named `2586.jpg`, `2690.jpg`, `2698.png`, and `2615.webp`. The browser runner reads them as inputs to its disposable attachment fixture. Without this directory, four synthetic covers are generated. Record source URLs and SHA-256 values when using real artwork.

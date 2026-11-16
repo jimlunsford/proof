@@ -1,12 +1,12 @@
 # Proof version history
 
-## 2.0.20 (release candidate)
+## 2.0.20
 
 - Restore the established compact-archive presentation on Projects pages 2 and later: show the unnumbered “Projects” H1 and omit the redundant overview link.
 - Preserve page one's full introduction and four curated cards. Keep the compact Project Notes listing and pagination on later pages.
 - Retain distinct numbered browser-tab titles, per-page canonical/OG/schema identities, the existing post membership, legacy redirects, and out-of-range 404 behavior.
 - Align the disposable WordPress integration tests with the category archive display convention.
-- Candidate only, separate guarded production deployment required.
+- Merged through PR #15 and deployed to JimLunsford.com on November 16, 2026. The guarded deployment passed before-and-after Restic recovery checks; live browser acceptance confirmed the established Projects archive presentation and all 28 Project Notes.
 
 ## 2.0.19
 

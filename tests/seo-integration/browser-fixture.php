@@ -6,7 +6,9 @@ wp_mkdir_p(WPMU_PLUGIN_DIR);
 file_put_contents(WPMU_PLUGIN_DIR.'/proof-disposable-header.php', '<?php add_action("send_headers", function(){ header("X-Proof-Disposable-Test-Site: 1"); });');
 if (!in_array(wp_parse_url(home_url(), PHP_URL_HOST), ['127.0.0.1', 'localhost'], true)) { throw new RuntimeException('Loopback fixture required'); }
 if (get_posts(['post_type'=>'any', 'post_status'=>array_keys(get_post_stati()), 'numberposts'=>1])) { throw new RuntimeException('Empty disposable database required'); }
-if ('proof' !== get_stylesheet() || '7.1.3' !== $GLOBALS['wp_version']) { throw new RuntimeException('Pinned WordPress and active Proof required'); }
+$stack = defined('PROOF_TEST_STACK') ? PROOF_TEST_STACK : 'current';
+$wordpressVersions = ['current' => '7.1.4', 'legacy' => '7.1.3'];
+if (!isset($wordpressVersions[$stack]) || 'proof' !== get_stylesheet() || $wordpressVersions[$stack] !== $GLOBALS['wp_version']) { throw new RuntimeException('Pinned WordPress and active Proof required'); }
 // switch_theme() changes the active theme but does not load its functions in
 // this same bootstrap request. Subsequent HTTP requests load them normally.
 require_once get_template_directory().'/functions.php';
