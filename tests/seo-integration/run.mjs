@@ -210,14 +210,16 @@ try {
         const result = await request(server, route, label);
         valid(result, projects.slice((page - 1) * 6, page * 6), 'WebPage');
         const html = readFileSync(join(evidence, `${label}.html`), 'utf8');
-        const heading = page === 1 ? 'Projects' : `Projects, Page ${page}`;
+        // Match compact category archives: visible H1 stays unnumbered on later pages.
+        const heading = 'Projects';
         check(html.includes(`<h1 class="proof-page-title">${heading}</h1>`), `${label}: heading`);
         check(html.includes('>Project Notes</h2>'), `${label}: retained listing`);
         same((html.match(/class="proof-project-card"/g) || []).length, page === 1 ? 4 : 0, `${label}: curated cards`);
         same(html.includes('id="proof-project-cards-heading"'), page === 1, `${label}: curated section`);
         same(html.includes('class="proof-archive-description"'), page === 1, `${label}: introduction`);
         const overview = new URL('/projects/', result.url).href;
-        same(html.includes(`href="${overview}">Projects overview</a>`), page > 1, `${label}: return link`);
+        same(html.includes(`href="${overview}">Projects overview</a>`), false, `${label}: no extra overview link`);
+        same((html.match(/<h1 class="proof-page-title">/g) || []).length, 1, `${label}: one visible Projects heading`);
         same(result.titles.length, 1, `${label}: exactly one browser title`);
         if (page === 1) {
           overviewTitle = result.titles[0];

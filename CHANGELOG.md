@@ -1,12 +1,20 @@
 # Proof version history
 
-## 2.0.19 (release candidate)
+## 2.0.20 (release candidate)
+
+- Restore the established compact-archive presentation on Projects pages 2 and later: show the unnumbered “Projects” H1 and omit the redundant overview link.
+- Preserve page one's full introduction and four curated cards. Keep the compact Project Notes listing and pagination on later pages.
+- Retain distinct numbered browser-tab titles, per-page canonical/OG/schema identities, the existing post membership, legacy redirects, and out-of-range 404 behavior.
+- Align the disposable WordPress integration tests with the category archive display convention.
+- Candidate only, separate guarded production deployment required.
+
+## 2.0.19
 
 - Wrap overlong links inside single-post article content without clipping text or changing scrolling in code and preformatted blocks.
 - Keep the full Projects portfolio, introduction, and destination links on page one; use numbered headings, an overview link, and the existing Project Notes listing on valid continuation pages.
 - Give valid paginated Projects pages distinct browser titles through The SEO Framework's title filter while preserving canonical, Open Graph, WebPage schema, ReadAction, legacy redirects and true out-of-range 404 responses.
 - Extend focused browser and disposable WordPress/SEO regressions for narrow articles and pagination boundaries, including the current 28-post Projects listing.
-- Review candidate only. Production deployment remains separately guarded; deferred navigation optimization is excluded.
+- Merged as PR #14 and deployed November 16, 2026 after an initial guarded rollback and corrected OPcache timestamp handling. The narrow-link fix received an article-specific LiteSpeed UCSS refresh.
 
 ## 2.0.18
 

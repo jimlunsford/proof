@@ -30,7 +30,7 @@ WordPress continues to own publishing, permissions, media, and ordinary content 
 
 - WordPress 6.4 or newer. Theme metadata is tested up to WordPress 7.1.3.
 - PHP 7.4 or newer.
-- Current source version: **2.0.19** (release candidate; not yet deployed). JimLunsford.com is running **Proof 2.0.18** as of November 15, 2026.
+- Current source version: **2.0.20** (release candidate; not yet deployed). JimLunsford.com is running **Proof 2.0.19** as of November 16, 2026.
 
 Proof's source repository does not contain the live site's database, uploaded media, or WordPress configuration.
 
