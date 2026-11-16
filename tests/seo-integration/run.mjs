@@ -17,8 +17,24 @@ const temp = mkdtempSync(join(tmpdir(), 'proof-seo-'));
 const evidence = process.env.PROOF_TEST_RESULTS ? resolve(process.env.PROOF_TEST_RESULTS) : join(temp, 'results');
 mkdirSync(evidence, { recursive: true });
 const historicalCommit = 'ba684c6cd37d30c2292a88916f48c3ca519f19fe';
+// Both stacks are byte-for-byte pinned; 'current' matches live WordPress/TSF
+// versions as checked on November 16, 2026. 'legacy' preserves prior evidence.
+const stacks = {
+  current: {
+    wp: '7.1.4', wpSha: 'a147146c159362778ecbbbfb07bb20ddf4e85b130f971c824e656a8f938c5f87',
+    tsf: '5.2.1', tsfSha: '9e18a34a4437ddf7ec5a6e1dea6d1e59408db6e59944b8fc672250b80fdbd3fa',
+  },
+  legacy: {
+    wp: '7.1.3', wpSha: 'eb58a90ed55147f90f7bd55d0d3334960a69b7e8a4cc142c8ddfea8965218227',
+    tsf: '5.2.0', tsfSha: '36292cd74e727453441670ec153b93c20392dbb2443789683d8bca863f89fb4f',
+  },
+};
+const stackName = process.env.PROOF_TEST_STACK || 'current';
+assert.ok(Object.hasOwn(stacks, stackName), 'PROOF_TEST_STACK must be current or legacy');
+const stack = stacks[stackName];
+const wordpressZip = `wordpress-${stack.wp}.zip`;
 const plugins = [
-  ['autodescription.5.2.0.zip', '36292cd74e727453441670ec153b93c20392dbb2443789683d8bca863f89fb4f'],
+  [`autodescription.${stack.tsf}.zip`, stack.tsfSha],
   ['redirection.5.10.1.zip', 'f68a4be447ecba00c64e8a39d7517807ed49cc18e77b7a364c20cb31848235b7'],
 ];
 let assertions = 0;
@@ -117,9 +133,9 @@ async function start(themePath) {
     handler = await bootWordPressAndRequestHandler({
       siteUrl: serverUrl, sapiName: 'cgi-fcgi', phpVersion: '8.3', maxPhpInstances: 1,
       createPhpRuntime: () => loadNodeRuntime('8.3', { emscriptenOptions: { processId: process.pid } }), cookieStore: false,
-      wordPressZip: new File([readFileSync(join(temp, 'wordpress-7.1.3.zip'))], 'wordpress.zip'),
+      wordPressZip: new File([readFileSync(join(temp, wordpressZip))], 'wordpress.zip'),
       sqliteIntegrationPluginZip: new File([readFileSync(new URL('sqlite-database-integration.zip', import.meta.resolve('@wp-playground/cli')))], 'sqlite.zip'),
-      constants: { WP_ENVIRONMENT_TYPE: 'local', PROOF_DISPOSABLE_TEST_SITE: true, DISABLE_WP_CRON: true },
+      constants: { WP_ENVIRONMENT_TYPE: 'local', PROOF_DISPOSABLE_TEST_SITE: true, PROOF_TEST_STACK: stackName, DISABLE_WP_CRON: true },
       hooks: { beforeDatabaseSetup: async php => {
         php.mkdir('/wordpress/wp-content/themes/proof');
         await php.mount('/wordpress/wp-content/themes/proof', createNodeFsMountHandler(themePath));
@@ -144,11 +160,11 @@ async function start(themePath) {
 
 try {
   const wpCache = process.env.PROOF_TEST_WORDPRESS_ZIP;
-  const wpResponse = wpCache ? null : await fetch('https://wordpress.org/wordpress-7.1.3.zip');
+  const wpResponse = wpCache ? null : await fetch(`https://wordpress.org/${wordpressZip}`);
   if (wpResponse) assert.equal(wpResponse.status, 200, 'Download pinned WordPress');
   const wpBytes = wpCache ? readFileSync(wpCache) : Buffer.from(await wpResponse.arrayBuffer());
-  assert.equal(createHash('sha256').update(wpBytes).digest('hex'), 'eb58a90ed55147f90f7bd55d0d3334960a69b7e8a4cc142c8ddfea8965218227', 'Pinned WordPress checksum');
-  writeFileSync(join(temp, 'wordpress-7.1.3.zip'), wpBytes);
+  assert.equal(createHash('sha256').update(wpBytes).digest('hex'), stack.wpSha, 'Pinned WordPress checksum');
+  writeFileSync(join(temp, wordpressZip), wpBytes);
   for (const [name, digest] of plugins) {
     const cached = process.env.PROOF_TEST_PLUGIN_CACHE && join(process.env.PROOF_TEST_PLUGIN_CACHE, name);
     let bytes;
@@ -165,7 +181,7 @@ try {
   try {
     let data = await fixture(server, 'proof_seo_fixture_seed');
     const runtime = await server.playground.run({ code: `<?php require '/wordpress/wp-load.php'; echo json_encode(['wordpress'=>$wp_version,'php'=>PHP_VERSION,'sapi'=>PHP_SAPI,'tsf'=>THE_SEO_FRAMEWORK_VERSION,'redirection'=>REDIRECTION_VERSION,'database'=>'SQLite via WordPress Playground']);` });
-    console.log(`RUNTIME: ${runtime.text}`);
+    console.log(`TEST_STACK: ${stackName}; RUNTIME: ${runtime.text}`);
     ledger.push({ runtime: JSON.parse(runtime.text) });
     const law = '/category/law-enforcement-corrections/';
     const sole = await request(server, law, 'law-sole');
@@ -273,6 +289,6 @@ try {
   status = 'PASS';
   console.log(`PASS: ${assertions} real WordPress/TSF HTTP integration assertions, including historical negative control.`);
 } finally {
-  writeFileSync(join(evidence, 'http-results.json'), JSON.stringify({ status, assertions, results: ledger }, null, 2));
+  writeFileSync(join(evidence, 'http-results.json'), JSON.stringify({ status, stack: stackName, assertions, results: ledger }, null, 2));
   rmSync(temp, { recursive: true, force: true });
 }

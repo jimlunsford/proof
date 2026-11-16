@@ -27,7 +27,15 @@ function proof_seo_fixture_seed() {
 	if ( get_option( 'proof_seo_fixture' ) || get_posts( array( 'post_type' => 'any', 'post_status' => array_keys( get_post_stati() ), 'numberposts' => 1 ) ) ) {
 		throw new RuntimeException( 'Fixture seed requires an empty disposable database.' );
 	}
-	if ( 'proof' !== get_stylesheet() || '7.1.3' !== $GLOBALS['wp_version'] || '5.2.0' !== THE_SEO_FRAMEWORK_VERSION || '5.10.1' !== REDIRECTION_VERSION ) {
+	$stack = defined( 'PROOF_TEST_STACK' ) ? PROOF_TEST_STACK : 'current';
+	$expected = array(
+		'current' => array( '7.1.4', '5.2.1' ),
+		'legacy'  => array( '7.1.3', '5.2.0' ),
+	);
+	if ( ! isset( $expected[ $stack ] ) || 'proof' !== get_stylesheet()
+		|| $expected[ $stack ][0] !== $GLOBALS['wp_version']
+		|| $expected[ $stack ][1] !== THE_SEO_FRAMEWORK_VERSION
+		|| '5.10.1' !== REDIRECTION_VERSION ) {
 		throw new RuntimeException( 'The active theme or pinned WordPress/plugin versions do not match.' );
 	}
 	update_option( 'blog_public', 1 );
