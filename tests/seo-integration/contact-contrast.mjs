@@ -7,7 +7,7 @@ import { chromium } from 'playwright';
 const url = new URL(process.env.PROOF_CONTACT_FIXTURE);
 assert.ok(['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname));
 const browser = await chromium.launch({ executablePath: process.env.PROOF_BROWSER_EXECUTABLE });
-const stylesheet = new URL('../../assets/css/theme.css', import.meta.url);
+const stylesheet = new URL('../../assets/css/theme-layout.css', import.meta.url);
 const fields = '.ff-el-form-control, .noptin-form-field__email';
 const submit = '.ff-btn-submit';
 
@@ -52,7 +52,7 @@ try {
 				return route.fulfill({ json: newsletterReply });
 			}
 			if (route.request().method() !== 'GET') return route.abort();
-			if (asset.pathname.endsWith('/themes/proof/assets/css/theme.css')) {
+			if (asset.pathname.endsWith('/themes/proof/assets/css/theme-layout.css')) {
 				themeLoaded = true;
 				return route.fulfill({ path: fileURLToPath(stylesheet), contentType: 'text/css' });
 			}

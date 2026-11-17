@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "engines": { "node": ">=24.18", "npm": ">=11.16" },
-  "scripts": { "test": "node --experimental-wasm-jspi run.mjs", "browser": "node browser.mjs" },
+  "scripts": { "test": "node --experimental-wasm-jspi run.mjs", "browser": "node browser.mjs", "navigation-release": "node --experimental-wasm-jspi navigation-release.mjs" },
   "devDependencies": {
     "@php-wasm/node": "3.1.59",
     "@wp-playground/blueprints": "3.1.59",

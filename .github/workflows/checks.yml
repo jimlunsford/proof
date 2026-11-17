@@ -17,6 +17,8 @@ jobs:
         php: ['7.4', '8.3']
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
@@ -51,6 +53,7 @@ jobs:
         with:
           # The HTTP suite archives an exact historical failing commit as a negative control.
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -66,6 +69,32 @@ jobs:
       - name: Disposable browser acceptance
         if: matrix.stack == 'current'
         run: npm --prefix tests/seo-integration run browser
+      - name: Guest navigation and browser cache transitions
+        if: matrix.stack == 'current'
+        shell: bash
+        env:
+          PROOF_NAV_BASE: ${{ runner.temp }}/proof-base-2.0.20
+          PROOF_TEST_PLUGIN_CACHE: ${{ runner.temp }}/proof-nav-distributions
+          PROOF_NAV_OUTPUT: ${{ github.workspace }}/proof-ci-evidence/navigation
+        run: |
+          set -euo pipefail
+          git rev-parse HEAD
+          mkdir -p "$PROOF_NAV_BASE" "$PROOF_TEST_PLUGIN_CACHE"
+          git archive 5d744f2836aa4a4c3f227ef05f50b5d0de941094 | tar -x -C "$PROOF_NAV_BASE"
+          (
+            cd "$PROOF_TEST_PLUGIN_CACHE"
+            curl --fail --location --silent --show-error --retry 3 -O https://wordpress.org/wordpress-7.1.4.zip
+            curl --fail --location --silent --show-error --retry 3 -O https://downloads.wordpress.org/plugin/litespeed-cache.7.9.3.zip
+            sha256sum --check <<'DIGESTS'
+          a147146c159362778ecbbbfb07bb20ddf4e85b130f971c824e656a8f938c5f87  wordpress-7.1.4.zip
+          8ab0373e41a3e9d4329d8fa6f99f3afd096cc21ac2befb0a84dc005d8afb36d7  litespeed-cache.7.9.3.zip
+          DIGESTS
+            unzip -p litespeed-cache.7.9.3.zip litespeed-cache/assets/js/guest.min.js > guest.min.js
+          )
+          php tests/guest-navigation-signature.php "$PROOF_TEST_PLUGIN_CACHE/guest.min.js" 7.9.3 guest
+          php tests/guest-navigation-signature.php "$PROOF_TEST_PLUGIN_CACHE/guest.min.js" 7.9.4 guest
+          php tests/guest-navigation-signature.php "$PROOF_TEST_PLUGIN_CACHE/guest.min.js" 7.9.3 ordinary
+          npm --prefix tests/seo-integration run navigation-release
       - name: Save disposable test evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -74,5 +103,6 @@ jobs:
           path: |
             ${{ env.PROOF_TEST_RESULTS }}
             ${{ env.PROOF_BROWSER_OUTPUT }}
+            proof-ci-evidence/navigation
           if-no-files-found: warn
           retention-days: 7

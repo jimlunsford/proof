@@ -18,6 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		)
 	);
 	?>
+	<a class="proof-nav-search-fallback" href="<?php echo esc_url( home_url( '/?s=' ) ); ?>"><?php esc_html_e( 'Search', 'proof' ); ?></a>
 	<button class="proof-nav-search-link" type="button" aria-expanded="false" aria-controls="proof-search-panel">
 		<?php esc_html_e( 'Search', 'proof' ); ?>
 	</button>
