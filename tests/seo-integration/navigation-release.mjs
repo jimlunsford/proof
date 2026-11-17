@@ -355,12 +355,13 @@ async function openSearch(page, input) {
 async function ready(page) {
 	await page.waitForFunction(() => document.documentElement.classList.contains('proof-nav-ready'));
 }
-async function run(name, fn, width = 390) {
+async function run(name, fn, width = 390, javaScriptEnabled = true) {
 	policy = fresh();
 	record = { name, width, checks: [], requests: [], html: [], events: [], cdp: [], bytes: [], exceptions: [] };
 	reports.push(record);
 	const context = await browser.newContext({
 		viewport: { width, height: 860 },
+		javaScriptEnabled,
 		userAgent: UA,
 		hasTouch: true,
 		serviceWorkers: 'block',
@@ -530,7 +531,7 @@ async function loadRelease(page, path, expected) {
 	const s = await state(page);
 	const file = expected === 'new' ? newJS : oldJS;
 	check(
-		s.assets.some((r) => r.url.includes('/' + file + '?ver=')),
+		s.assets.some((r) => r.url === prefix + file + '?ver=' + sites[expected].versions[2]),
 		'rendered document requested its release-specific script',
 	);
 	return s;
@@ -558,6 +559,8 @@ async function releaseMatrix(page, ctx, longCache) {
 	await openSearch(page, 'mouse');
 	check(opened(await state(page), 'search'), 'first Search on a different page after upgrade works');
 	record.warmNew = await loadRelease(page, '/books/', 'new');
+	check(record.upgrade.assets.find((a) => a.url.includes('/' + newJS)).transfer > 0, 'upgrade fetched the new physical controller');
+	check(record.warmNew.assets.find((a) => a.url.includes('/' + newJS)).transfer === 0, 'corrected controller reused from HTTP cache');
 	await activate(page, menu);
 	check(opened(await state(page), 'menu'), 'corrected warm page opens Menu');
 	await page.goBack();
@@ -573,6 +576,7 @@ async function releaseMatrix(page, ctx, longCache) {
 	await activate(page, search);
 	check((await state(page)).fieldWidth > 0, 'already-open candidate tab works across reversal');
 	record.reversal = await loadRelease(page, '/contact-jim-lunsford/', 'old');
+	check(record.reversal.assets.find((a) => a.url.includes('/' + oldJS)).transfer === 0, 'warm rollback reused original controller');
 	await toggleLegacy(page);
 	await Promise.allSettled(tab.bodies);
 	const originalHash = sha(readFileSync(join(old, oldJS))),
@@ -645,8 +649,12 @@ async function checkStale(page, from, guest, discard = false) {
 			);
 		if (guest && discard) {
 			check(
-				record.requests.some((r) => r.path.includes('/wp-content/litespeed/') && r.status === 404),
-				'discarded optimized payload explicitly detected',
+				record.requests.some((r) => r.path.includes('/wp-content/litespeed/css/') && r.status === 404),
+				'missing generated stylesheet returned 404',
+			);
+			check(
+				record.requests.some((r) => r.path.includes('/wp-content/litespeed/js/') && r.status === 404),
+				'unrelated generated JavaScript remains unavailable',
 			);
 			const retained = reports.find((r) => r.name === 'cold-stale-new-guest').final;
 			check(
@@ -761,6 +769,60 @@ try {
 			nativeReplies().length === 2,
 			'two real overlapping requests from deliberately repeating the native bootstrap',
 		);
+	});
+	for (const mode of ['script-disabled', 'controller-blocked']) {
+		await run(mode + '-native-search', async (p) => {
+			policy.ordinary = true;
+			policy.blockScript = mode === 'controller-blocked';
+			await p.goto(origin + '/books/');
+			const fallback = p.locator(nav).getByRole('link', { name: 'Search', exact: true });
+			check(await fallback.isVisible() && !(await p.locator(search).isVisible()), 'only native Search is exposed');
+			await fallback.focus();
+			await p.keyboard.press('Enter');
+			await p.waitForURL(origin + '/?s=');
+			const input = p.locator('.proof-search-results-form input');
+			await input.fill('self-trust');
+			await input.press('Enter');
+			await p.waitForURL(origin + '/?s=self-trust');
+			check(await p.locator('.proof-post-feed article').count() === 1, 'native Search finds the actual WordPress result');
+			for (const target of ['/?s=', '/?s=self-trust']) {
+				check(record.requests.filter((r) => r.path === target && r.method === 'GET').length === 1, 'one native GET for ' + target);
+			}
+			if (policy.blockScript) {
+				check(record.requests.some((r) => r.path.includes(newJS) && r.method === 'HEAD' && r.status === 403), 'blocked response never qualifies for local recovery');
+			}
+		}, 390, mode !== 'script-disabled');
+	}
+	await run('native-search-focused-during-enhancement', async (p) => {
+		policy.ordinary = true;
+		policy.holdScript = true;
+		await p.goto(origin + '/books/', { waitUntil: 'commit' });
+		await waitGate(policy.scriptSeen, 'delayed controller');
+		const link = p.locator(nav).getByRole('link', { name: 'Search', exact: true });
+		await link.focus();
+		policy.allowScript.release();
+		await ready(p);
+		check(await link.isVisible() && await link.evaluate((el) => el === document.activeElement), 'focused native Search survives enhancement');
+		check(!(await p.locator(search).isVisible()), 'one Search action while the native link has focus');
+		await p.keyboard.press('Enter');
+		await p.waitForURL(origin + '/?s=');
+		check(record.requests.filter((r) => r.path === '/?s=' && r.method === 'GET').length === 1, 'focused link navigates once');
+	});
+	await run('controller-arrives-during-idle-replacement', async (p) => {
+		policy.holdScript = true;
+		policy.holdReply = true;
+		await p.goto(origin + '/books/', { waitUntil: 'commit' });
+		await waitGate(policy.scriptSeen, 'delayed controller');
+		// Impose the lifecycle ordering directly. Other cases use the real affirmative response.
+		await p.evaluate(() => document.dispatchEvent(new Event('proof:guest-reload', { cancelable: true })));
+		policy.allowScript.release();
+		await ready(p);
+		check(!(await p.locator(menu).isVisible()), 'late binding keeps native controls during replacement');
+		await p.evaluate(() => window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true })));
+		await activate(p, menu);
+		await waitGate(policy.arrived, 'real affirmative');
+		await releaseDecision(p);
+		check(opened(await state(p), 'menu'), 'restored document responds to its first trusted Menu input');
 	});
 	await run('slow-script-native-link', async (p) => {
 		policy.holdScript = true;

@@ -5,7 +5,7 @@
 	const searchPanel = document.querySelector('.proof-search-panel');
 	let searchFocusTimeout;
 
-	if (document.documentElement.classList.contains('proof-guest-reloading') || !menuToggle || !nav || !searchPanel || typeof proofLabels === 'undefined' || document.documentElement.classList.contains('proof-nav-ready')) {
+	if (!menuToggle || !nav || !searchPanel || typeof proofLabels === 'undefined' || document.documentElement.classList.contains('proof-nav-ready')) {
 		return;
 	}
 

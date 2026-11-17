@@ -14,7 +14,7 @@ Text Domain: proof
 Tags: blog, one-column, two-columns, custom-logo, featured-images, editor-style
 */
 
-/* Main styles load from assets/css/theme.css */
+/* Main layout loads from assets/css/theme-layout.css. */
 
 
 .screen-reader-text {

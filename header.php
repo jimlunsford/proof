@@ -16,7 +16,7 @@ $proof_hide_front_header = is_front_page() && (bool) get_theme_mod( 'proof_ident
 	<?php if ( ! $proof_hide_front_header ) : ?>
 		<?php get_template_part( 'template-parts/site/navigation-recovery' ); ?>
 	<?php endif; ?>
-	<?php if ( defined( 'LITESPEED_GUEST' ) && LITESPEED_GUEST ) : ?>
+	<?php if ( proof_supports_guest_navigation() ) : ?>
 		<script id="proof-guest-navigation" data-no-defer="1"><?php require get_template_directory() . '/assets/js/guest-navigation.js'; ?></script>
 	<?php endif; ?>
 	<?php wp_head(); ?>

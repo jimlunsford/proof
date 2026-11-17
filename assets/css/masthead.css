@@ -47,15 +47,20 @@
 }
 
 /* Keep native links available until their disclosure controls are bound. */
-html:not(.proof-nav-ready) .proof-menu-toggle {
+html:not(.proof-nav-ready) .proof-menu-toggle,
+html.proof-guest-reloading .proof-menu-toggle {
 	visibility: hidden;
 }
 
-html:not(.proof-nav-ready) .proof-nav-search-link {
+html:not(.proof-nav-ready) .proof-nav-search-link,
+html.proof-guest-reloading .proof-nav-search-link,
+html.proof-nav-ready:not(.proof-guest-reloading) .proof-nav-search-fallback:not(:focus):not(:active),
+.proof-nav-search-fallback:focus + .proof-nav-search-link {
 	display: none;
 }
 
-html:not(.proof-nav-ready) .proof-primary-nav {
+html:not(.proof-nav-ready) .proof-primary-nav,
+html.proof-guest-reloading .proof-primary-nav {
 	display: flex;
 }
 

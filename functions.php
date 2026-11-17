@@ -84,32 +84,35 @@ function proof_navigation_script_attributes( $attributes ) {
 add_filter( 'wp_inline_script_attributes', 'proof_navigation_script_attributes' );
 add_filter( 'wp_script_attributes', 'proof_navigation_script_attributes' );
 
-/**
- * The 7.9.3 guest bootstrap has no before-reload event. Use the final HTML
- * filter to guard just its affirmative branch, before LiteSpeed records a reload.
- */
+/** Only the tested Guest Mode emitter supplies the decision that Proof can veto. */
+function proof_supports_guest_navigation() {
+	return defined( 'LITESPEED_GUEST' ) && LITESPEED_GUEST
+		&& defined( 'LSCWP_V' ) && '7.9.3' === LSCWP_V
+		&& defined( 'LSWCP_PLUGIN_URL' );
+}
+
+/** Guard the identified affirmative callback when LiteSpeed builds a guest page. */
 function proof_guard_guest_navigation( $html ) {
-	if ( ! defined( 'LITESPEED_GUEST' ) || ! LITESPEED_GUEST || false === strpos( $html, 'id="proof-guest-navigation"' ) ) {
+	if ( ! proof_supports_guest_navigation() || false === strpos( $html, 'id="proof-guest-navigation"' ) ) {
 		return $html;
 	}
-	// Match a complete, identified guest bootstrap. Leave unfamiliar output alone.
-	$start    = '<script data-no-optimize="1">var litespeed_vary=';
-	$decision = 'e.hasOwnProperty("reload")&&"yes"==e.reload&&';
-	$tail     = '(sessionStorage.setItem("litespeed_docref",document.referrer),sessionStorage.setItem("litespeed_reloaded","1"),window.location.reload(!0))}));';
-	$offset   = strpos( $html, $start );
-	if ( false === $offset ) {
-		return $html;
-	}
-	$end = strpos( $html, '</script>', $offset );
-	if ( false === $end ) {
-		return $html;
-	}
-	$script = substr( $html, $offset, $end - $offset );
-	if ( false === strpos( $script, '/guest.vary.php",{' ) || substr( $script, -strlen( $decision . $tail ) ) !== $decision . $tail ) {
-		return $html;
-	}
-	$guarded = str_replace( $decision, $decision . 'document.dispatchEvent(new Event("proof:guest-reload",{cancelable:true}))&&', $script );
-	return str_replace( $script . '</script>', $guarded . '</script>', $html );
+
+	// GUI::_enqueue_guest_js substitutes only this URL path in assets/js/guest.min.js.
+	$endpoint = esc_url( wp_parse_url( LSWCP_PLUGIN_URL . 'guest.vary.php', PHP_URL_PATH ) );
+	$guarded  = preg_replace_callback(
+		'~<script data-no-optimize="1">(var litespeed_vary=[^<]*)</script>~',
+		static function ( $match ) use ( $endpoint ) {
+			$source = str_replace( 'fetch("' . $endpoint . '",', 'fetch("litespeed_url",', $match[1], $count );
+			if ( 1 !== $count || '64e6b3cd4edac55bde3670cd4f124b27269c3c7201b8f9902853e7d0b24c7b22' !== hash( 'sha256', $source ) ) {
+				return $match[0];
+			}
+
+			$decision = 'e.hasOwnProperty("reload")&&"yes"==e.reload&&';
+			return str_replace( $decision, $decision . 'document.dispatchEvent(new Event("proof:guest-reload",{cancelable:true}))&&', $match[0] );
+		},
+		$html
+	);
+	return null === $guarded ? $html : $guarded;
 }
 add_filter( 'litespeed_buffer_after', 'proof_guard_guest_navigation' );
 
