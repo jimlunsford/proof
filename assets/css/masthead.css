@@ -1,0 +1,90 @@
+.proof-masthead-inner {
+	position: relative;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 2rem;
+}
+
+.proof-primary-nav {
+	display: flex;
+	position: absolute;
+	top: calc(100% + 1rem);
+	right: 0;
+	z-index: 50;
+	width: min(21rem, calc(100vw - 1.5rem));
+	padding: 1rem 1.1rem;
+	border: 1px solid var(--proof-soft-border);
+	background: var(--proof-surface);
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 1rem;
+}
+
+.js .proof-primary-nav {
+	display: none;
+}
+
+.proof-primary-nav.is-open,
+.js .proof-primary-nav.is-open {
+	display: flex;
+}
+
+.proof-search-panel {
+	display: none;
+	position: absolute;
+	top: calc(100% + 1rem);
+	right: 0;
+	z-index: 45;
+	width: min(34rem, 100%);
+	padding: 1rem 1.1rem;
+	border: 1px solid var(--proof-soft-border);
+	background: var(--proof-surface);
+}
+
+.proof-search-panel.is-open {
+	display: block;
+}
+
+/* Keep native links available until their disclosure controls are bound. */
+html:not(.proof-nav-ready) .proof-menu-toggle {
+	visibility: hidden;
+}
+
+html:not(.proof-nav-ready) .proof-nav-search-link {
+	display: none;
+}
+
+html:not(.proof-nav-ready) .proof-primary-nav {
+	display: flex;
+}
+
+@media (max-width: 920px) {
+	.proof-masthead-inner {
+		flex-wrap: nowrap;
+	}
+
+	.proof-primary-nav {
+		width: min(20rem, calc(100vw - 1.5rem));
+	}
+}
+
+@media (max-width: 640px) {
+	.proof-primary-nav {
+		top: calc(100% + 0.75rem);
+		width: min(18rem, calc(100vw - 1.5rem));
+	}
+
+	.proof-search-panel {
+		top: calc(100% + 0.75rem);
+		width: 100%;
+	}
+
+	.proof-masthead-inner {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: start;
+		column-gap: 0.85rem;
+		row-gap: 0;
+	}
+}

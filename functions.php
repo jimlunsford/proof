@@ -39,12 +39,12 @@ add_action( 'after_setup_theme', 'proof_content_width', 0 );
 
 function proof_enqueue_assets() {
 	$theme_version = wp_get_theme()->get( 'Version' );
-	$theme_css     = get_template_directory() . '/assets/css/theme.css';
+	$theme_css     = get_template_directory() . '/assets/css/theme-layout.css';
 	$style_version = $theme_version . '-' . filemtime( get_stylesheet_directory() . '/style.css' );
 	$asset_version = file_exists( $theme_css ) ? $theme_version . '-' . filemtime( $theme_css ) : $theme_version;
 
 	wp_enqueue_style( 'proof-style', get_stylesheet_uri(), array(), $style_version );
-	wp_enqueue_style( 'proof-theme', get_template_directory_uri() . '/assets/css/theme.css', array( 'proof-style' ), $asset_version );
+	wp_enqueue_style( 'proof-theme', get_template_directory_uri() . '/assets/css/theme-layout.css', array( 'proof-style' ), $asset_version );
 	wp_add_inline_style( 'proof-theme', proof_get_identity_hub_critical_css() );
 
 	// Keep the approved book addition scoped to the homepage and available
@@ -56,7 +56,7 @@ function proof_enqueue_assets() {
 
 	wp_enqueue_script(
 		'proof-navigation',
-		get_template_directory_uri() . '/assets/js/navigation.js',
+		get_template_directory_uri() . '/assets/js/navigation-ready.js',
 		array(),
 		wp_get_theme()->get( 'Version' ),
 		true
@@ -73,6 +73,46 @@ function proof_enqueue_assets() {
 	);
 }
 add_action( 'wp_enqueue_scripts', 'proof_enqueue_assets' );
+
+/** Keep the navigation script and its translated labels ready for first input. */
+function proof_navigation_script_attributes( $attributes ) {
+	if ( isset( $attributes['id'] ) && in_array( $attributes['id'], array( 'proof-navigation-js-extra', 'proof-navigation-js' ), true ) ) {
+		$attributes['data-no-defer'] = '1';
+	}
+	return $attributes;
+}
+add_filter( 'wp_inline_script_attributes', 'proof_navigation_script_attributes' );
+add_filter( 'wp_script_attributes', 'proof_navigation_script_attributes' );
+
+/**
+ * The 7.9.3 guest bootstrap has no before-reload event. Use the final HTML
+ * filter to guard just its affirmative branch, before LiteSpeed records a reload.
+ */
+function proof_guard_guest_navigation( $html ) {
+	if ( ! defined( 'LITESPEED_GUEST' ) || ! LITESPEED_GUEST || false === strpos( $html, 'id="proof-guest-navigation"' ) ) {
+		return $html;
+	}
+	// Match a complete, identified guest bootstrap. Leave unfamiliar output alone.
+	$start    = '<script data-no-optimize="1">var litespeed_vary=';
+	$decision = 'e.hasOwnProperty("reload")&&"yes"==e.reload&&';
+	$tail     = '(sessionStorage.setItem("litespeed_docref",document.referrer),sessionStorage.setItem("litespeed_reloaded","1"),window.location.reload(!0))}));';
+	$offset   = strpos( $html, $start );
+	if ( false === $offset ) {
+		return $html;
+	}
+	$end = strpos( $html, '</script>', $offset );
+	if ( false === $end ) {
+		return $html;
+	}
+	$script = substr( $html, $offset, $end - $offset );
+	if ( false === strpos( $script, '/guest.vary.php",{' ) || substr( $script, -strlen( $decision . $tail ) ) !== $decision . $tail ) {
+		return $html;
+	}
+	$guarded = str_replace( $decision, $decision . 'document.dispatchEvent(new Event("proof:guest-reload",{cancelable:true}))&&', $script );
+	return str_replace( $script . '</script>', $guarded . '</script>', $html );
+}
+add_filter( 'litespeed_buffer_after', 'proof_guard_guest_navigation' );
+
 
 /**
  * Keep category routing and the displayed feed on the same main query.
